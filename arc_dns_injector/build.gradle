@@ -7,14 +7,36 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+// Define the gitUsed() method
+def gitUsed() {
+    // Your logic to determine if git is used
+    // Example: Check if the .git directory exists
+    return file('.git').exists()
+}
+
+def getGitHash(projectName) {
+    // Your logic to get the Git hash
+    // This is an example using a shell command
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-parse', '--short', 'HEAD'
+            standardOutput = stdout
+        }
+        return "Git hash: ${stdout.toString().trim()} (Project: ${projectName})"
+    } catch (Exception e) {
+        return "Git hash not available"
+    }
+}
+
 jar {
     manifest {
         attributes("Manifest-Version": "1.0",
                 "PreMain-Class": "git.artdeell.arcdns.ArcDNSInjectorAgent")
     }
     if (gitUsed()){
-      File versionFile = file("../app_pojavlauncher/src/main/assets/components/arc_dns_injector/version")
-      versionFile.write(getGitHash(project.name))
+        File versionFile = file("../app_pojavlauncher/src/main/assets/components/arc_dns_injector/version")
+        versionFile.write(getGitHash(project.name))
     }
     destinationDirectory.set(file("../app_pojavlauncher/src/main/assets/components/arc_dns_injector/"))
 }

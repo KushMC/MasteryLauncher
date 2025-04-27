@@ -10,13 +10,15 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url "https://jitpack.io" }
+        maven {
+            url = uri("https://jitpack.io")
+        }
     }
 }
 
-rootProject.name='PojavLauncher'
-include ':jre_lwjgl3glfw'
-include ':app_pojavlauncher'
+rootProject.name = "PojavLauncher"
 
-include ':arc_dns_injector'
-include ':forge_installer'
+include(":jre_lwjgl3glfw")
+include(":app_pojavlauncher")
+include(":arc_dns_injector")
+include(":forge_installer")
