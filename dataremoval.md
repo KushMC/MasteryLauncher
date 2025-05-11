@@ -1,5 +1,5 @@
-# Remove PojavLauncher account data
-PojavLauncher uses two types of accounts:
+# Remove BitLauncher account data
+BitLauncher uses two types of accounts:
 - Local accounts
 - Microsoft accounts
 <br>

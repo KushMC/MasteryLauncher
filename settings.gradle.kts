@@ -16,9 +16,10 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "PojavLauncher"
+rootProject.name = "BitLauncher"
 
 include(":jre_lwjgl3glfw")
-include(":app_pojavlauncher")
+include(":app_bitlauncher")
 include(":arc_dns_injector")
 include(":forge_installer")
+include(":design")
