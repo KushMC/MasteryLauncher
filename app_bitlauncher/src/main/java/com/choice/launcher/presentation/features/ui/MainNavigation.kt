@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.rememberNavController
 import com.choice.design.theme.ApplicationTheme
 import com.choice.launcher.presentation.compose.navigation.AppNavHost
+import com.choice.launcher.presentation.features.launcher.navigation.launcherComposable
 import com.choice.launcher.presentation.features.login.navigation.loginComposable
 import com.choice.launcher.presentation.features.testing_storage.navigation.testingStorageComposable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -29,7 +30,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainNavigation(
-    onOpenSettings: () -> Unit
+    onOpenSettings: () -> Unit,
 ) {
     val navController = rememberNavController()
     var currentScreen by remember {
@@ -60,10 +61,15 @@ fun MainNavigation(
     ) {
         testingStorageComposable(
             navController = navController,
-            onOpenSettings = onOpenSettings
+            onOpenSettings = onOpenSettings,
         )
 
         loginComposable(
+            modifier = Modifier.fillMaxSize(),
+            navController = navController
+        )
+
+        launcherComposable(
             modifier = Modifier.fillMaxSize(),
             navController = navController
         )

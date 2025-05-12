@@ -1,4 +1,4 @@
-package com.choice.launcher.base
+package com.choice.launcher.core.base
 
 
 import androidx.lifecycle.ViewModel

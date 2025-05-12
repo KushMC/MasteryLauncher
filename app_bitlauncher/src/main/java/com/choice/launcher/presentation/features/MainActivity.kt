@@ -10,6 +10,8 @@ import com.choice.launcher.presentation.features.launcher.ui.LauncherScreen
 import com.choice.launcher.presentation.features.missing_storage.MissingStorageActivity
 import com.choice.launcher.presentation.features.ui.MainNavigation
 import dagger.hilt.android.AndroidEntryPoint
+import net.kdt.pojavlaunch.LauncherActivity
+import net.kdt.pojavlaunch.TestStorageActivity
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -25,7 +27,7 @@ class MainActivity : AppCompatActivity() {
                             startActivity(this)
                             finish()
                         }
-                    }
+                    },
                 )
             }
         }

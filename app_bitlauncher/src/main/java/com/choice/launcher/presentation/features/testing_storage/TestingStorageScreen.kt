@@ -31,6 +31,8 @@ import com.choice.design.composable.LogoBitLauncher
 import com.choice.design.theme.ApplicationTheme
 import kotlinx.coroutines.delay
 import net.kdt.pojavlaunch.Tools
+import net.kdt.pojavlaunch.prefs.LauncherPreferences
+import net.kdt.pojavlaunch.tasks.AsyncAssetManager
 
 @Composable
 fun TestingStorageScreen(
@@ -55,6 +57,10 @@ fun TestingStorageScreen(
                 delay(1000)
                 if (hasStorage) {
                     description = "Carregando assets..."
+                    //Initialize constants (implicitly) and preferences after we confirm that we have storage.
+                    LauncherPreferences.loadPreferences(context)
+                    AsyncAssetManager.unpackComponents(context)
+                    AsyncAssetManager.unpackSingleFiles(context)
                     onStartLauncher()
                 } else {
                     description = "Permissões insuficientes"

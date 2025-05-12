@@ -9,8 +9,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,10 +17,12 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDeepLink
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
+import androidx.navigation.NavOptionsBuilder
+import androidx.navigation.PopUpToBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.choice.design.theme.ApplicationTheme
-import com.choice.launcher.base.navigation.Destination
+import com.choice.launcher.core.navigation.Destination
 
 @Composable
 fun AppNavHost(
@@ -88,3 +88,8 @@ fun NavGraphBuilder.appComposable(
     )
 
 }
+
+
+fun NavHostController.navigate(destination: Destination, builder: NavOptionsBuilder.() -> Unit) = this.navigate(destination.route, builder)
+fun NavHostController.navigate(destination: Destination) = this.navigate(destination.route)
+fun NavOptionsBuilder.popUpTo(destination: Destination, popUpToBuilder: PopUpToBuilder.() -> Unit = {}) = this.popUpTo(route = destination.route, popUpToBuilder = popUpToBuilder)

@@ -114,7 +114,7 @@ public final class Tools {
     public static String MULTIRT_HOME;
     public static String LOCAL_RENDERER = null;
     public static int DEVICE_ARCHITECTURE;
-    public static final String LAUNCHERPROFILES_RTPREFIX = "pojav://";
+    public static final String LAUNCHERPROFILES_RTPREFIX = "bit://";
 
     // New since 3.3.1
     public static String DIR_ACCOUNT_NEW;

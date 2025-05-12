@@ -41,7 +41,7 @@ fun LauncherButton(
         shape = ApplicationTheme.shapes.medium,
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
-            contentColor = ApplicationTheme.colors.onPrimary
+            contentColor = ApplicationTheme.colors.onPrimary,
         ),
         elevation = elevation,
         border = border,

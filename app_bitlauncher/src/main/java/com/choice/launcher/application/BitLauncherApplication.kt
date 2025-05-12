@@ -36,7 +36,6 @@ class BitLauncherApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        ContextExecutor.setApplication(this)
 
         Thread.setDefaultUncaughtExceptionHandler { _, throwable -> crashHandler.handleException(throwable) }
 
@@ -47,7 +46,6 @@ class BitLauncherApplication : Application() {
 
     override fun onTerminate() {
         super.onTerminate()
-        ContextExecutor.clearApplication()
     }
 
     override fun attachBaseContext(base: Context) {
@@ -102,9 +100,9 @@ class CrashHandler(private val application: Application) {
         val storagePermAllowed = checkStoragePermission()
 
         val crashFile = File(if (storagePermAllowed) Tools.DIR_GAME_HOME else Tools.DIR_DATA, "latestcrash.txt")
+        th.printStackTrace()
         saveCrashReport(crashFile, th)
 
-        FatalErrorActivity.showError(application, crashFile.absolutePath, storagePermAllowed, th)
         Tools.fullyExit()
     }
 

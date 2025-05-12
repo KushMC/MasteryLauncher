@@ -1,4 +1,4 @@
-package com.choice.launcher.base.navigation
+package com.choice.launcher.core.navigation
 
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavType
