@@ -22,6 +22,6 @@
     *;
  }
 # Option screens
- -keep class net.kdt.pojavlaunch.prefs.screens** {*;}
--keep class com.choice.design.** { *; }
+ -keep class com.redemastery.oldapi.pojav.prefs.screens** {*;}
+-keep class com.redemastery.design.** { *; }
 

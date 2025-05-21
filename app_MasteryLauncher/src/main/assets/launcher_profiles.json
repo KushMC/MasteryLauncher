@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ef78613b-0168-479c-8d02-c800511649af": {
+      "name": "Forge",
+      "lastVersionId": "1.7.10-Forge10.13.4.1614-1.7.10"
+    }
+  },
+  "selectedProfile": "Forge"
+}

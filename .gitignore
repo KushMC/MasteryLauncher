@@ -1,12 +1,12 @@
 /.gradle
 /build
 /*/build
-app_BitLauncher/src/main/assets/components/jre
-/app_BitLauncher/src/main/assets/components/jre-new/
-/app_BitLauncher/src/main/assets/components/jre-21/
+app_MasteryLauncher/src/main/assets/components/jre
+/app_MasteryLauncher/src/main/assets/components/jre-new/
+/app_MasteryLauncher/src/main/assets/components/jre-21/
 local.properties
 .idea/
-app_BitLauncher/.cxx/
+app_MasteryLauncher/.cxx/
 .vs/
 /curseforge_key.txt
-/app_BitLauncher/libs/ltw-release.aar
+/app_MasteryLauncher/libs/ltw-release.aar

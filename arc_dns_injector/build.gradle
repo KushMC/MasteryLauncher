@@ -34,9 +34,8 @@ jar {
         attributes("Manifest-Version": "1.0",
                 "PreMain-Class": "git.artdeell.arcdns.ArcDNSInjectorAgent")
     }
-    if (gitUsed()){
-        File versionFile = file("../app_BitLauncher/src/main/assets/components/arc_dns_injector/version")
-        versionFile.write(getGitHash(project.name))
-    }
-    destinationDirectory.set(file("../app_BitLauncher/src/main/assets/components/arc_dns_injector/"))
+    File versionFile = file("../app_MasteryLauncher/src/main/assets/components/arc_dns_injector/version")
+    versionFile.write(project.version.toString())
+
+    destinationDirectory.set(file("../app_MasteryLauncher/src/main/assets/components/arc_dns_injector/"))
 }

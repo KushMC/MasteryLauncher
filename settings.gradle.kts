@@ -16,10 +16,10 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BitLauncher"
+rootProject.name = "MasteryLauncher"
 
 include(":jre_lwjgl3glfw")
-include(":app_bitlauncher")
+include(":app_MasteryLauncher")
 include(":arc_dns_injector")
 include(":forge_installer")
 include(":design")

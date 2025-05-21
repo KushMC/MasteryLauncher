@@ -11,40 +11,16 @@ dependencies {
     implementation 'org.json:json:20230618'
 }
 
-// Define the gitUsed() method
-def gitUsed() {
-    // Implement your logic here. For example:
-    // return true if git is used, false otherwise.
-    // You might check for the presence of a .git directory
-    // or execute a git command to determine this.
-
-    // Example: return true if a .git folder exists in the project root
-    return file("../.git").exists()
-}
-
-// Define the getGitHash method
-def getGitHash(projectName){
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        workingDir "../"
-        commandLine 'git', 'rev-parse', 'HEAD'
-        standardOutput = stdout
-    }
-    def gitHash = stdout.toString().trim()
-    return projectName + "-" + gitHash
-}
 
 jar {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
-    if (gitUsed()){
-        File versionFile = file("../app_BitLauncher/src/main/assets/components/forge_installer/version")
-        versionFile.write(getGitHash(project.name))
-    }
+    File versionFile = file("../app_MasteryLauncher/src/main/assets/components/forge_installer/version")
+    versionFile.write(project.version.toString())
     manifest {
         attributes("Manifest-Version": "1.0",
                 "PreMain-Class": "git.artdeell.installer_agent.Agent")
     }
-    destinationDirectory.set(file("../app_BitLauncher/src/main/assets/components/forge_installer/"))
+    destinationDirectory.set(file("../app_MasteryLauncher/src/main/assets/components/forge_installer/"))
 }

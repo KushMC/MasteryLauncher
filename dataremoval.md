@@ -1,5 +1,5 @@
-# Remove BitLauncher account data
-BitLauncher uses two types of accounts:
+# Remove MasteryLauncher account data
+MasteryLauncher uses two types of accounts:
 - Local accounts
 - Microsoft accounts
 <br>

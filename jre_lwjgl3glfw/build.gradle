@@ -29,11 +29,9 @@ def getGitHash(String projectName){
 jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     archiveBaseName = "lwjgl-glfw-classes"
-    destinationDirectory.set(file("../app_BitLauncher/src/main/assets/components/lwjgl3/"))
-    if (gitUsed()){
-        File versionFile = file("../app_BitLauncher/src/main/assets/components/lwjgl3/version")
-        versionFile.write(getGitHash(project.name))
-    }
+    destinationDirectory.set(file("../app_MasteryLauncher/src/main/assets/components/lwjgl3/"))
+    File versionFile = file("../app_MasteryLauncher/src/main/assets/components/lwjgl3/version")
+    versionFile.write(project.version.toString())
     from {
         configurations.default.collect {
             println(it.getName())

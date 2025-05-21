@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.choice.design"
+    namespace = "com.redemastery.design"
     compileSdk = 34
 
     defaultConfig {
@@ -26,9 +26,9 @@ android {
                 "proguard-rules.pro"
             )
 
-            resValue("string", "application_package", "net.kdt.pojavlaunch.debug")
-            resValue("string", "storageProviderAuthorities", "net.kdt.pojavlaunch.scoped.gamefolder.debug")
-            resValue("string", "shareProviderAuthority", "net.kdt.pojavlaunch.scoped.controlfolder.debug")
+            resValue("string", "application_package", "com.redemastery.oldapi.pojav.debug")
+            resValue("string", "storageProviderAuthorities", "com.redemastery.oldapi.pojav.scoped.gamefolder.debug")
+            resValue("string", "shareProviderAuthority", "com.redemastery.oldapi.pojav.scoped.controlfolder.debug")
         }
 
         create("proguard") {
@@ -47,8 +47,8 @@ android {
                 getDefaultProguardFile("proguard-android.txt"),
                 "proguard-rules.pro"
             )
-            resValue("string", "storageProviderAuthorities", "net.kdt.pojavlaunch.scoped.gamefolder")
-            resValue("string", "application_package", "net.kdt.pojavlaunch")
+            resValue("string", "storageProviderAuthorities", "com.redemastery.oldapi.pojav.scoped.gamefolder")
+            resValue("string", "application_package", "com.redemastery.oldapi.pojav")
         }
 
         create("gplay") {
@@ -78,6 +78,7 @@ android {
 }
 
 dependencies {
+    implementation("io.coil-kt:coil-gif:2.4.0")
 
     implementation(libs.coil.compose)
     implementation(libs.accompanist.systemuicontroller)
