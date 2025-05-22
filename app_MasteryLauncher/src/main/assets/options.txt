@@ -103,7 +103,7 @@ pauseOnLostFocus:true
 lang:pt_BR
 key_key.plug.orient:25
 key_key.chat:20
-bobView:false
+bobView:true
 soundCategory_hostile:1.0
 overrideWidth:1680
 key_key.inventory:18

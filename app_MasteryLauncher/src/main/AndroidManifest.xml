@@ -50,7 +50,7 @@
             android:value="ratio_float" />
 
         <activity
-            android:name=".presentation.features.MainActivity"
+            android:name=".presentation.features.PreGameActivity"
             android:exported="true"
             android:label="@string/app_short_name"
             android:launchMode="singleTop">

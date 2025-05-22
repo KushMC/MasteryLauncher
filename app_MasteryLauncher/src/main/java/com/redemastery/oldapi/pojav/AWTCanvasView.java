@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.text.TextPaint;
 import android.util.AttributeSet;
@@ -24,23 +25,24 @@ public class AWTCanvasView extends TextureView implements TextureView.SurfaceTex
     private boolean mIsDestroyed = false;
     private final TextPaint mFpsPaint;
 
-    // Temporary count fps https://stackoverflow.com/a/13729241
-    private final LinkedList<Long> mTimes = new LinkedList<Long>(){{add(System.nanoTime());}};
-    
+    private final LinkedList<Long> mTimes = new LinkedList<Long>() {{
+        add(System.nanoTime());
+    }};
+
     public AWTCanvasView(Context ctx) {
         this(ctx, null);
     }
-    
+
     public AWTCanvasView(Context ctx, AttributeSet attrs) {
         super(ctx, attrs);
-        
+
         mFpsPaint = new TextPaint();
         mFpsPaint.setColor(Color.WHITE);
         mFpsPaint.setTextSize(20);
 
-
+        // Importante: permitir transparência
+        setOpaque(false);
         setSurfaceTextureListener(this);
-
         post(this::refreshSize);
     }
 
@@ -76,16 +78,17 @@ public class AWTCanvasView extends TextureView implements TextureView.SurfaceTex
         try {
             while (!mIsDestroyed && surface.isValid()) {
                 canvas = surface.lockCanvas(null);
-                canvas.drawRGB(0, 0, 0);
-                int[] rgbArray = JREUtils.renderAWTScreenFrame(/* canvas, mWidth, mHeight */);
+                canvas.drawColor(Color.TRANSPARENT, android.graphics.PorterDuff.Mode.CLEAR);
+
+                int[] rgbArray = JREUtils.renderAWTScreenFrame();
                 boolean mDrawing = rgbArray != null;
                 if (rgbArray != null) {
                     canvas.save();
-                    rgbArrayBitmap.setPixels(rgbArray, 0, AWT_CANVAS_WIDTH, 0, 0, AWT_CANVAS_WIDTH, AWT_CANVAS_HEIGHT);
+                   // rgbArrayBitmap.setPixels(rgbArray, 0, AWT_CANVAS_WIDTH, 0, 0, AWT_CANVAS_WIDTH, AWT_CANVAS_HEIGHT);
                     canvas.drawBitmap(rgbArrayBitmap, 0, 0, paint);
                     canvas.restore();
                 }
-                canvas.drawText("FPS: " + (Math.round(fps() * 10) / 10) + ", drawing=" + mDrawing, 0, 20, mFpsPaint);
+             //  canvas.drawText("FPS: " + (Math.round(fps() * 10) / 10) + ", drawing=" + mDrawing, 0, 20, mFpsPaint);
                 surface.unlockCanvasAndPost(canvas);
             }
         } catch (Throwable throwable) {
@@ -95,29 +98,25 @@ public class AWTCanvasView extends TextureView implements TextureView.SurfaceTex
         surface.release();
     }
 
-    /** Calculates and returns frames per second */
     private double fps() {
         long lastTime = System.nanoTime();
         double difference = (lastTime - mTimes.getFirst()) / NANOS;
         mTimes.addLast(lastTime);
-        int size = mTimes.size();
-        if (size > MAX_SIZE) {
+        if (mTimes.size() > MAX_SIZE) {
             mTimes.removeFirst();
         }
         return difference > 0 ? mTimes.size() / difference : 0.0;
     }
 
-    /** Make the view fit the proper aspect ratio of the surface */
-    private void refreshSize(){
+    private void refreshSize() {
         ViewGroup.LayoutParams layoutParams = getLayoutParams();
 
-        if(getHeight() < getWidth()){
+        if (getHeight() < getWidth()) {
             layoutParams.width = AWT_CANVAS_WIDTH * getHeight() / AWT_CANVAS_HEIGHT;
-        }else{
+        } else {
             layoutParams.height = AWT_CANVAS_HEIGHT * getWidth() / AWT_CANVAS_WIDTH;
         }
 
         setLayoutParams(layoutParams);
     }
-
 }

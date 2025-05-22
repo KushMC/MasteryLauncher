@@ -34,7 +34,7 @@ class TestingStorageViewModel @Inject constructor(
                                     TestingStorageScreenState.Success
                                 },
                                 progress = 1f,
-                                message = if(success) "Instalando Forge" else "Abrindo Launcher"
+                                message = if(success) "Analisando Forge" else "Abrindo Launcher"
                             )
                         }
                     },

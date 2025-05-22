@@ -44,21 +44,16 @@ import java.io.File
 @Composable
 fun TestingStorageScreen(
     onRequestPermission: () -> Unit,
-    onStartLauncher: () -> Unit
+    onStartLauncher: () -> Unit,
+    onInstallForge: () -> Unit
 ) {
-    val context = LocalContext.current
 
     val viewModel = hiltViewModel<TestingStorageViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(state.screenState) {
         when(state.screenState){
-            TestingStorageScreenState.ForgeInstall -> {
-                val intent = Intent(context, JavaGUILauncherActivity::class.java).apply {
-                    ForgeUtils.addAutoInstallArgs(this, File(DIR_DATA, "forge_installers.jar"), true)
-                }
-                context.startActivity(intent)
-            }
+            TestingStorageScreenState.ForgeInstall -> onInstallForge()
             TestingStorageScreenState.Success -> onStartLauncher()
             TestingStorageScreenState.Error -> onRequestPermission()
             else -> {}
@@ -77,10 +72,10 @@ fun TestingStorageScreen(
 }
 
 @Composable
-private fun LoadingScreen(
+fun LoadingScreen(
     modifier: Modifier,
     description: String?,
-    progress: Float? = null
+    progress: Float? = -1f
 ) {
     Box(modifier = modifier.padding(ApplicationTheme.spacing.medium)) {
 
@@ -108,15 +103,27 @@ private fun LoadingScreen(
             }
 
             progress?.let {
-                LinearProgressIndicator(
-                    progress = { it },
-                    modifier = Modifier
-                        .height(ApplicationTheme.spacing.extraSmall)
-                        .fillMaxWidth(),
-                    color = ApplicationTheme.colors.primary,
-                    trackColor = ApplicationTheme.colors.surface,
-                    strokeCap = StrokeCap.Round
-                )
+                if(it == -1f) {
+                    LinearProgressIndicator(
+                        modifier = Modifier
+                            .height(ApplicationTheme.spacing.extraSmall)
+                            .fillMaxWidth(),
+                        color = ApplicationTheme.colors.primary,
+                        trackColor = ApplicationTheme.colors.surface,
+                        strokeCap = StrokeCap.Round
+                    )
+                }else{
+                    LinearProgressIndicator(
+                        progress = { it },
+                        modifier = Modifier
+                            .height(ApplicationTheme.spacing.extraSmall)
+                            .fillMaxWidth(),
+                        color = ApplicationTheme.colors.primary,
+                        trackColor = ApplicationTheme.colors.surface,
+                        strokeCap = StrokeCap.Round
+                    )
+                }
+
             }
         }
     }

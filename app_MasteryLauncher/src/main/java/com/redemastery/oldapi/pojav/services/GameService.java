@@ -46,11 +46,11 @@ public class GameService extends Service {
                  PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "channel_id")
-                .setContentTitle(getString(R.string.lazy_service_default_title))
-                .setContentText(getString(R.string.notification_game_runs))
+                .setContentTitle("MasteryLauncher")
+                .setContentText("Rodando minecraft")
                 .setContentIntent(contentIntent)
-                .addAction(android.R.drawable.ic_menu_close_clear_cancel,  getString(R.string.notification_terminate), pendingKillIntent)
-                .setSmallIcon(R.drawable.notif_icon)
+                .addAction(android.R.drawable.ic_menu_close_clear_cancel,  "Sair", pendingKillIntent)
+                .setSmallIcon(R.drawable.logo)
                 .setNotificationSilent();
 
         Notification notification = notificationBuilder.build();

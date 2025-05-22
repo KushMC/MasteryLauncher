@@ -343,8 +343,8 @@ public class JREUtils {
         Logger.appendToLog("Java Exit code: " + exitCode);
         if (exitCode != 0) {
             LifecycleAwareAlertDialog.DialogCreator dialogCreator = (dialog, builder)->
-                    builder.setMessage(activity.getString(R.string.mcn_exit_title, exitCode))
-                    .setPositiveButton(R.string.main_share_logs, (dialogInterface, which)-> shareLog(activity));
+                    builder.setMessage("Ocorreu um erro ao tentar instalar o Forge")
+                    .setPositiveButton("Tentar novamente", (dialogInterface, which)->  Tools.fullyExit());
 
             LifecycleAwareAlertDialog.haltOnDialog(activity.getLifecycle(), activity, dialogCreator);
         }

@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import com.redemastery.design.theme.ApplicationTheme
 import com.redemastery.design.theme.MasteryLauncherTheme
-import com.redemastery.launcher.presentation.features.MainActivity
+import com.redemastery.launcher.presentation.features.PreGameActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -49,7 +49,7 @@ class MissingStorageActivity : ComponentActivity() {
             MasteryLauncherTheme {
                 MissingStorageScreen(
                     onRetry = {
-                        val intent = Intent(this, MainActivity::class.java)
+                        val intent = Intent(this, PreGameActivity::class.java)
                         startActivity(intent)
                         finish()
                     },

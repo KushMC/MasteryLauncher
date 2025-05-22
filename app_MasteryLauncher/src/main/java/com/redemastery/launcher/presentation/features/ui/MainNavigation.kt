@@ -1,6 +1,7 @@
 package com.redemastery.launcher.presentation.features.ui
 
 import android.Manifest.*
+import android.content.Intent
 import android.os.Build
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -33,11 +34,16 @@ import com.redemastery.launcher.presentation.compose.navigation.AppNavHost
 import com.redemastery.launcher.presentation.features.launcher.navigation.launcherComposable
 import com.redemastery.launcher.presentation.features.login.navigation.loginComposable
 import com.redemastery.launcher.presentation.features.testing_storage.navigation.testingStorageComposable
+import com.redemastery.oldapi.pojav.JavaGUILauncherActivity
+import com.redemastery.oldapi.pojav.Tools.DIR_DATA
+import com.redemastery.oldapi.pojav.modloaders.ForgeUtils
+import java.io.File
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MainNavigation(
-    onOpenSettings: () -> Unit
+    onOpenSettings: () -> Unit,
+    onInstallForge: () -> Unit
 ) {
     val navController = rememberNavController()
     var currentScreen by remember {
@@ -98,6 +104,7 @@ fun MainNavigation(
             testingStorageComposable(
                 navController = navController,
                 onOpenSettings = onOpenSettings,
+                onInstallForge = onInstallForge
             )
 
             loginComposable(

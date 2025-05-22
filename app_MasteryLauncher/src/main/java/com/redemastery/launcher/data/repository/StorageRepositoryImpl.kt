@@ -28,6 +28,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 import androidx.core.content.edit
+import com.redemastery.launcher.utils.MultiRTUtils.forceReread
 import kotlinx.coroutines.flow.catch
 
 class StorageRepositoryImpl @Inject constructor(
@@ -60,7 +61,6 @@ class StorageRepositoryImpl @Inject constructor(
     override suspend fun copyRuntimeAsset(fileName: String): Flow<IResult<String>> {
         return flow {
             emit(IResult.Loading(progress = 0f, message = "Verificando asset '$fileName'"))
-
             val destFile = File(DIR_DATA, fileName)
             if (destFile.exists()) {
                 emit(success(destFile.absolutePath))

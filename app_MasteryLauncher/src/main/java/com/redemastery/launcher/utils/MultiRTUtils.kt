@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import okhttp3.internal.wait
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream
 import org.apache.commons.io.FileUtils.deleteDirectory
@@ -42,9 +43,9 @@ object MultiRTUtils {
      * Lista todos os runtimes disponíveis
      */
     fun getRuntimes(): List<Runtime> =
-        RUNTIME_FOLDER.takeIf { it.exists() || it.mkdirs() }?.listFiles()
+        File(Tools.MULTIRT_HOME).takeIf { it.exists() || it.mkdirs() }?.listFiles()
             ?.map { read(it.name) }
-            ?: throw RuntimeException("Failed to create or access runtime directory")
+            ?: emptyList()
 
     /**
      * Retorna o nome exato de um JRE se existir
@@ -125,6 +126,8 @@ object MultiRTUtils {
             when (it) {
                 is IResult.Success -> {
                     postPrepare("Internal")
+                    getRuntimes()
+                    forceReread(getRuntimes()[0].name)
                     emit(IResult.Loading("Pós-preparação interna", 0.8f))
                     emit(success(Unit))
                 }
@@ -201,22 +204,18 @@ object MultiRTUtils {
         if (dest.exists()) deleteDirectory(dest)
 
         emit(IResult.Loading("Calculando total de entradas '${dest.name}'", 0.2f))
+
+        emit(IResult.Loading("Instalando Java", 0.2f))
         installRuntimeNoRemove(
             universal,
-            dest,
-            universal.available(),
-            onProgress = { fileName, progress ->
-                emit(loading("${dest.name}/$fileName", progress))
-            })
+            dest
+        )
         installRuntimeNoRemove(
             platform,
-            dest,
-            platform.available(),
-            onProgress = { fileName, progress ->
-                emit(loading("${dest.name}/$fileName", progress))
-            })
+            dest
+        )
 
-        emit(IResult.Loading("Pós-preparação (200)", 0.7f))
+        emit(IResult.Loading("Descompactando .pack..", 0.7f))
         unpack200(Tools.NATIVE_LIB_DIR, dest.absolutePath)
 
         FileOutputStream(File(dest, "bit_version")).use { fos ->
@@ -228,14 +227,20 @@ object MultiRTUtils {
         emit(failed(e))
     }.flowOn(Dispatchers.IO)
 
-    private suspend fun installRuntimeNoRemove(
+    private fun installRuntimeNoRemove(
         stream: InputStream,
         dest: File,
-        total: Int,
-        onProgress: suspend (String, Float) -> Unit
     ) {
-        uncompressTarXZ(stream, dest, total, onProgress)
+        uncompressTarXZBasic(stream, dest)
         stream.close()
+    }
+
+    private fun countEntriesInTarXZ(inputStream: InputStream): Int {
+        var count = 0
+        TarArchiveInputStream(XZCompressorInputStream(inputStream)).use { tar ->
+            while (tar.nextTarEntry != null) count++
+        }
+        return count
     }
 
     private fun readInternalRuntimeVersion(name: String): String? =
@@ -419,10 +424,11 @@ object MultiRTUtils {
                 )
                     .start().waitFor()
             } catch (e: Exception) {
-                Log.e("MULTIRT", "Failed to unpack the runtime!", e)
+                Log.e("MULTIRT", "Failed to unpack the runtime: ${pack.name}", e)
             }
         }
     }
+
 
     @Throws(IOException::class)
     private fun copyDummyNativeLib(name: String, dest: File, lib: String) {
