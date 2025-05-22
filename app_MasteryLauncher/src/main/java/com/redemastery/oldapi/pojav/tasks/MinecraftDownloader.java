@@ -77,6 +77,7 @@ public class MinecraftDownloader {
 
         MasteryLauncherApplication.Companion.getSExecutorService().execute(() -> {
             try {
+                listener.onStartDownload();
                 downloadGame(activity, version, realVersion);
                 listener.onDownloadDone();
             }catch (Exception e) {

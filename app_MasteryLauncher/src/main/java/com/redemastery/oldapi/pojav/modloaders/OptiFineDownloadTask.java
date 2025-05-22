@@ -123,4 +123,9 @@ public class OptiFineDownloadTask implements Runnable, Tools.DownloaderFeedback,
             mMinecraftDownloadLock.notifyAll();
         }
     }
+
+    @Override
+    public void onStartDownload() {
+
+    }
 }

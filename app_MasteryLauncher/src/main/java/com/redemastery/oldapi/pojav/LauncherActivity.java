@@ -30,6 +30,7 @@ import com.redemastery.launcher.R;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 
+import com.redemastery.launcher.presentation.features.launcher.ui.context_aware.ContextAwareDoneListenerObserver;
 import com.redemastery.oldapi.pojav.contracts.OpenDocumentWithExtension;
 import com.redemastery.oldapi.pojav.extra.ExtraConstants;
 import com.redemastery.oldapi.pojav.extra.ExtraCore;
@@ -137,7 +138,7 @@ public class LauncherActivity extends BaseActivity {
                 activity,
                 mcVersion,
                 normalizedVersionId,
-                new ContextAwareDoneListener(activity, normalizedVersionId)
+                new ContextAwareDoneListenerObserver(normalizedVersionId)
         );
         return false;
     }

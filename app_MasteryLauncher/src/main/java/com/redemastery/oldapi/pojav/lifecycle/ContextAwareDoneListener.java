@@ -43,6 +43,11 @@ public class ContextAwareDoneListener implements AsyncMinecraftDownloader.DoneLi
     }
 
     @Override
+    public void onStartDownload() {
+
+    }
+
+    @Override
     public void executeWithActivity(Activity activity) {
         try {
             Intent gameStartIntent = createGameStartIntent(activity);

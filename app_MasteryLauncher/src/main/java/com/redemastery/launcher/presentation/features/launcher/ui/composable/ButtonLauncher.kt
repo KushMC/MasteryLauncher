@@ -36,6 +36,7 @@ import com.redemastery.design.theme.ApplicationTheme
 enum class DownloadState {
     IDLE,
     DOWNLOADING,
+    ERROR,
     COMPLETED
 }
 
@@ -48,9 +49,10 @@ fun DownloadStatusButton(
 ) {
     val animatedBackground by animateColorAsState(
         targetValue = when (state) {
-            DownloadState.IDLE -> ApplicationTheme.colors.surface
+            DownloadState.IDLE -> ApplicationTheme.colors.tertiary
             DownloadState.DOWNLOADING -> ApplicationTheme.colors.primary.copy(alpha = 0.8f)
             DownloadState.COMPLETED -> ApplicationTheme.colors.secondary
+            DownloadState.ERROR -> Color.Red.copy(alpha = 0.8f)
         },
         animationSpec = tween(durationMillis = 500)
     )
@@ -61,7 +63,7 @@ fun DownloadStatusButton(
             .clip(ApplicationTheme.shapes.medium)
             .background(animatedBackground)
             .clickable(
-                enabled = state != DownloadState.DOWNLOADING,
+                enabled = state == DownloadState.IDLE,
                 onClick = onLaunchClicked
             )
     ) {
@@ -101,6 +103,13 @@ fun DownloadStatusButton(
                             modifier = Modifier.size(ApplicationTheme.spacing.mediumLarge),
                             tint = ApplicationTheme.colors.onSurface
                         )
+
+                    DownloadState.ERROR ->
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = "Completed",
+                            modifier = Modifier.size(ApplicationTheme.spacing.mediumLarge),
+                        )
                 }
             }
 
@@ -111,6 +120,7 @@ fun DownloadStatusButton(
                     DownloadState.IDLE -> "LAUNCH GAME"
                     DownloadState.DOWNLOADING -> "DOWNLOADING... ${(progress * 100).toInt()}%"
                     DownloadState.COMPLETED -> "READY TO PLAY"
+                    DownloadState.ERROR -> "ERROR"
                 },
                 style = ApplicationTheme.typography.headlineSmall.copy(
                     color = ApplicationTheme.colors.onSurface,

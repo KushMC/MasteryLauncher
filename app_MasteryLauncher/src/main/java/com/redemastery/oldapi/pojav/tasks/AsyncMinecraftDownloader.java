@@ -26,5 +26,6 @@ public class AsyncMinecraftDownloader {
     public interface DoneListener{
         void onDownloadDone();
         void onDownloadFailed(Throwable throwable);
+        void onStartDownload();
     }
 }

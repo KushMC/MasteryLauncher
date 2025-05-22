@@ -66,6 +66,7 @@ import com.redemastery.launcher.domain.model.UserAccount
 import com.redemastery.launcher.presentation.features.launcher.screen.LauncherScreens
 import com.redemastery.launcher.presentation.features.launcher.ui.composable.DownloadState
 import com.redemastery.launcher.presentation.features.launcher.ui.composable.DownloadStatusButton
+import com.redemastery.launcher.presentation.features.launcher.ui.context_aware.ContextAwareDoneListenerObserver
 import com.redemastery.oldapi.pojav.LauncherActivity.launchMine
 import com.redemastery.oldapi.pojav.PojavProfile
 import java.util.UUID
@@ -131,7 +132,7 @@ fun LauncherScreen() {
 @Composable
 private fun BottomBar() {
 
-    var downloadState by remember { mutableStateOf(DownloadState.COMPLETED) }
+    var downloadState = ContextAwareDoneListenerObserver.downloadState
     var downloadProgress by remember { mutableFloatStateOf(0f) }
     val context = LocalContext.current as Activity
     Box(
