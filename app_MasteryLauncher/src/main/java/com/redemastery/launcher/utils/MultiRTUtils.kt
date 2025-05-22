@@ -278,7 +278,7 @@ object MultiRTUtils {
                         FileOutputStream(path).use { copyLarge(tar, it, buffer) }
                     }
                     count++
-                    onProgress(entry.name, (count * 1f/ total).coerceIn(0f, 1f))
+                    onProgress(entry.name, (count / total).coerceIn(0f, 1f))
                     entry = tar.nextTarEntry
                 }
             }

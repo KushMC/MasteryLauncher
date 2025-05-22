@@ -28,6 +28,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 import androidx.core.content.edit
+import kotlinx.coroutines.flow.catch
 
 class StorageRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context
@@ -91,6 +92,8 @@ class StorageRepositoryImpl @Inject constructor(
 
                 emit(success(destFile.absolutePath))
             }
+        }.catch { e ->
+            emit(failed(e))
         }.flowOn(Dispatchers.IO)
     }
 
@@ -98,14 +101,7 @@ class StorageRepositoryImpl @Inject constructor(
     override suspend fun installRuntime() : Flow<IResult<Unit>>{
         return flow {
             try {
-                unpackRuntime(am = context.assets).collect {
-                    when (it) {
-                        is IResult.Success -> emit(success(Unit))
-                        is IResult.Loading -> emit(loading(it.message, it.progress))
-                        is IResult.Failed -> emit(failed(it.exception))
-                        else -> {}
-                    }
-                }
+                unpackRuntime(am = context.assets).collect { emit(it) }
             } catch (e: IOException) {
                 emit(failed(e))
             }

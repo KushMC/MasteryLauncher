@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,40 +47,26 @@ fun TestingStorageScreen(
     onStartLauncher: () -> Unit
 ) {
     val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            // Sucesso: a JavaGUILauncherActivity terminou com sucesso
-            val exitCode = result.data?.getIntExtra("exitCode", -1)
-            Log.d("LauncherResult", "Sucesso com exitCode=$exitCode")
-            onStartLauncher()
-        } else {
-            Log.e("LauncherResult", "Falhou ou foi cancelado")
-            // Trate erro ou cancelamento
-        }
-    }
 
     val viewModel = hiltViewModel<TestingStorageViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    if (state.screenState == TestingStorageScreenState.Error) {
-        onRequestPermission()
-    }
-
-    if (state.screenState == TestingStorageScreenState.Success) {
-        onStartLauncher()
-    }
-
-    if (state.screenState == TestingStorageScreenState.ForgeInstall) {
-        val intent = Intent(context, JavaGUILauncherActivity::class.java).apply {
-            ForgeUtils.addAutoInstallArgs(this, File(DIR_DATA, "forge_installers.jar"), true)
+    LaunchedEffect(state.screenState) {
+        when(state.screenState){
+            TestingStorageScreenState.ForgeInstall -> {
+                val intent = Intent(context, JavaGUILauncherActivity::class.java).apply {
+                    ForgeUtils.addAutoInstallArgs(this, File(DIR_DATA, "forge_installers.jar"), true)
+                }
+                context.startActivity(intent)
+            }
+            TestingStorageScreenState.Success -> onStartLauncher()
+            TestingStorageScreenState.Error -> onRequestPermission()
+            else -> {}
         }
-        launcher.launch(intent)
     }
 
     LifeCycleEffect(
-        onResume = {
-            viewModel.checkStorage()
-        }
+        onResume = { viewModel.checkStorage() },
     )
 
     LoadingScreen(

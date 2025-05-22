@@ -517,6 +517,10 @@ public final class Tools {
                 fromStringArray(minecraftArgs.toArray(new String[0])):
                 versionInfo.minecraftArguments;
 
+        if(profile.isDemo()) mcArguments += " --demo";
+
+        mcArguments += " --server jogar.redemastery.com --port 25565";
+
         return JSONUtils.insertJSONValueList(splitAndFilterEmpty(mcArguments), varArgMap);
     }
 

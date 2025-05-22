@@ -348,8 +348,8 @@ public class JREUtils {
 
             LifecycleAwareAlertDialog.haltOnDialog(activity.getLifecycle(), activity, dialogCreator);
         }
-        activity.setResult(exitCode, new Intent());
-        activity.finish();
+
+        Tools.fullyExit();
     }
 
     /**

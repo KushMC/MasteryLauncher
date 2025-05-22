@@ -69,10 +69,10 @@ public class MinecraftDownloader {
                       @NonNull AsyncMinecraftDownloader.DoneListener listener) {
         if(activity != null){
             isLocalProfile = Tools.isLocalProfile(activity);
-            //Tools.switchDemo(Tools.isDemoProfile(activity));
+            Tools.switchDemo(Tools.isDemoProfile(activity));
         } else {
             isLocalProfile = true;
-           // Tools.switchDemo(true);
+            Tools.switchDemo(true);
         }
 
         MasteryLauncherApplication.Companion.getSExecutorService().execute(() -> {

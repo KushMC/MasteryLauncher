@@ -86,7 +86,7 @@ fun MainNavigation(
                     ),
                     clip = true
                 ),
-            painter = painterResource(id = R.drawable.launcher_background_blue),
+            painter = painterResource(id = R.drawable.launcher_background),
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )

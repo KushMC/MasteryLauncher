@@ -164,7 +164,7 @@ public class JavaGUILauncherActivity extends BaseActivity implements View.OnTouc
             }
             final String javaArgs = extras.getString("javaArgs");
             final Uri resourceUri = (Uri) extras.getParcelable("modUri");
-            if(extras.getBoolean("openLogOutput", false)) openLogOutput(null);
+            openLogOutput(findViewById(R.id.launcherLoggerView));
             if (javaArgs != null) {
                 startModInstaller(null, javaArgs);
             }else if(resourceUri != null) {
