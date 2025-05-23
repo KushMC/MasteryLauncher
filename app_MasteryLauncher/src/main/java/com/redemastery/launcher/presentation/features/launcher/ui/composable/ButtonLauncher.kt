@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -33,26 +34,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.redemastery.design.theme.ApplicationTheme
 
-enum class DownloadState {
-    IDLE,
-    DOWNLOADING,
-    ERROR,
-    COMPLETED
+sealed class DownloadState {
+    data object IDLE : DownloadState()
+    data class DOWNLOADING(val progress: Int)  : DownloadState()
+    data object ERROR : DownloadState()
+    data object COMPLETED : DownloadState()
 }
 
 @Composable
 fun DownloadStatusButton(
     modifier: Modifier = Modifier,
     state: DownloadState,
-    progress: Float = 0f,
     onLaunchClicked: () -> Unit
 ) {
     val animatedBackground by animateColorAsState(
         targetValue = when (state) {
-            DownloadState.IDLE -> ApplicationTheme.colors.tertiary
-            DownloadState.DOWNLOADING -> ApplicationTheme.colors.primary.copy(alpha = 0.8f)
-            DownloadState.COMPLETED -> ApplicationTheme.colors.secondary
-            DownloadState.ERROR -> Color.Red.copy(alpha = 0.8f)
+            is DownloadState.IDLE -> ApplicationTheme.colors.tertiary
+            is DownloadState.DOWNLOADING -> ApplicationTheme.colors.primary.copy(alpha = 0.8f)
+            is DownloadState.COMPLETED -> ApplicationTheme.colors.secondary
+            is DownloadState.ERROR -> Color.Red.copy(alpha = 0.8f)
         },
         animationSpec = tween(durationMillis = 500)
     )
@@ -71,13 +71,13 @@ fun DownloadStatusButton(
             modifier = Modifier
                 .wrapContentSize()
                 .padding(ApplicationTheme.spacing.medium)
-                .alpha(if (state == DownloadState.DOWNLOADING) 0.7f else 1f),
+                .alpha(if (state is DownloadState.DOWNLOADING) 0.7f else 1f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             Crossfade(targetState = state) { currentState ->
                 when (currentState) {
-                    DownloadState.IDLE ->
+                    is DownloadState.IDLE ->
                         Icon(
                             imageVector = Icons.Default.PlayArrow,
                             contentDescription = "Launch",
@@ -85,18 +85,16 @@ fun DownloadStatusButton(
                             tint = ApplicationTheme.colors.onSurface
                         )
 
-                    DownloadState.DOWNLOADING ->
+                    is DownloadState.DOWNLOADING ->
                         CircularProgressIndicator(
-                            progress = {
-                                progress
-                            },
+                            progress = { currentState.progress.toFloat() / 1f },
                             modifier = Modifier.size(ApplicationTheme.spacing.mediumLarge),
                             color = ApplicationTheme.colors.onSurface,
                             strokeWidth = 2.dp,
                             trackColor = ApplicationTheme.colors.surface,
                         )
 
-                    DownloadState.COMPLETED ->
+                    is DownloadState.COMPLETED ->
                         Icon(
                             imageVector = Icons.Default.CheckCircle,
                             contentDescription = "Completed",
@@ -104,10 +102,10 @@ fun DownloadStatusButton(
                             tint = ApplicationTheme.colors.onSurface
                         )
 
-                    DownloadState.ERROR ->
+                    is DownloadState.ERROR ->
                         Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = "Completed",
+                            imageVector = Icons.Default.ErrorOutline,
+                            contentDescription = "Error",
                             modifier = Modifier.size(ApplicationTheme.spacing.mediumLarge),
                         )
                 }
@@ -117,10 +115,10 @@ fun DownloadStatusButton(
 
             Text(
                 text = when (state) {
-                    DownloadState.IDLE -> "LAUNCH GAME"
-                    DownloadState.DOWNLOADING -> "DOWNLOADING... ${(progress * 100).toInt()}%"
-                    DownloadState.COMPLETED -> "READY TO PLAY"
-                    DownloadState.ERROR -> "ERROR"
+                    is DownloadState.IDLE -> "JOGAR"
+                    is DownloadState.DOWNLOADING -> "BAIXANDO... ${(state.progress).toInt()}%"
+                    is DownloadState.COMPLETED -> "ABRINDO JOGO"
+                    is DownloadState.ERROR -> "TENTE NOVAMENTE"
                 },
                 style = ApplicationTheme.typography.headlineSmall.copy(
                     color = ApplicationTheme.colors.onSurface,
@@ -128,12 +126,12 @@ fun DownloadStatusButton(
                 )
             )
 
-            if (state == DownloadState.DOWNLOADING) {
+            if (state is DownloadState.DOWNLOADING) {
                 Canvas(modifier = Modifier.wrapContentSize()) {
                     drawArc(
                         color = Color.Green.copy(alpha = 0.2f),
                         startAngle = -90f,
-                        sweepAngle = 360f * progress,
+                        sweepAngle = 360f * state.progress,
                         useCenter = false,
                         style = Stroke(width = 4f)
                     )

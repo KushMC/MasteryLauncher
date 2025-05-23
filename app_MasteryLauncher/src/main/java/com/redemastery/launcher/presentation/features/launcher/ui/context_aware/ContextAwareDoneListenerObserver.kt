@@ -14,6 +14,8 @@ import com.redemastery.oldapi.pojav.lifecycle.ContextExecutorTask
 import com.redemastery.oldapi.pojav.progresskeeper.ProgressKeeper
 import com.redemastery.oldapi.pojav.tasks.AsyncMinecraftDownloader
 import com.redemastery.oldapi.pojav.utils.NotificationUtils
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class ContextAwareDoneListenerObserver(
     private val versionId: String
@@ -21,10 +23,13 @@ class ContextAwareDoneListenerObserver(
 
     companion object {
         var downloadState by mutableStateOf<DownloadState>(DownloadState.IDLE)
+        fun updateDownloadState(downloadState: DownloadState){
+            this.downloadState = downloadState
+        }
     }
 
     override fun onStartDownload() {
-        downloadState = DownloadState.DOWNLOADING
+        downloadState = DownloadState.DOWNLOADING(0)
     }
 
     override fun onDownloadDone() {
@@ -40,7 +45,7 @@ class ContextAwareDoneListenerObserver(
 
     override fun executeWithActivity(activity: Activity) {
         try {
-            downloadState = DownloadState.IDLE
+            downloadState = DownloadState.COMPLETED
             val intent = createGameStartIntent(activity)
             activity.startActivity(intent)
             activity.finish()
@@ -64,6 +69,7 @@ class ContextAwareDoneListenerObserver(
     }
 
     private fun createGameStartIntent(context: Context): Intent {
+        downloadState = DownloadState.IDLE
         return Intent(context, MainActivity::class.java).apply {
             putExtra(MainActivity.INTENT_MINECRAFT_VERSION, versionId)
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)

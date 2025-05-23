@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
+import com.redemastery.launcher.presentation.features.launcher.ui.composable.DownloadState;
+import com.redemastery.launcher.presentation.features.launcher.ui.context_aware.ContextAwareDoneListenerObserver;
 import com.redemastery.oldapi.pojav.JAssetInfo;
 import com.redemastery.oldapi.pojav.JAssets;
 import com.redemastery.oldapi.pojav.JMinecraftVersionList;
@@ -147,6 +149,7 @@ public class MinecraftDownloader {
     private void reportProgressFileCounter(double speed) {
         long dlFileCounter = mProcessedFileCounter.get();
         int progress = (int)((dlFileCounter * 100L) / mTotalFileCount);
+        ContextAwareDoneListenerObserver.Companion.updateDownloadState(new DownloadState.DOWNLOADING(progress));
         ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, progress,
                 R.string.newdl_downloading_game_files, dlFileCounter,
                 mTotalFileCount, speed);
@@ -156,9 +159,11 @@ public class MinecraftDownloader {
         long dlFileSize = mProcessedSizeCounter.get();
         double dlSizeMegabytes = (double) dlFileSize / ONE_MEGABYTE;
         double dlTotalMegabytes = (double) mTotalSize / ONE_MEGABYTE;
-        int progress = (int)((dlFileSize * 100L) / mTotalSize);
+        int progress = (int) Math.ceil((dlFileSize * 100.0) / mTotalSize);
+        ContextAwareDoneListenerObserver.Companion.updateDownloadState(new DownloadState.DOWNLOADING(progress));
         ProgressLayout.setProgress(ProgressLayout.DOWNLOAD_MINECRAFT, progress,
                 R.string.newdl_downloading_game_files_size, dlSizeMegabytes, dlTotalMegabytes, speed);
+
     }
 
     private File createGameJsonPath(String versionId) {
