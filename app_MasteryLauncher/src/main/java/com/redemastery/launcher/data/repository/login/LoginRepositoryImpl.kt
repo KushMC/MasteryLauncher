@@ -1,16 +1,14 @@
-package com.redemastery.launcher.data.repository
+package com.redemastery.launcher.data.repository.login
 
 import android.content.Context
 import com.redemastery.launcher.core.IResult
 import com.redemastery.launcher.domain.model.UserAccount
 import com.redemastery.launcher.domain.repository.login.LoginRepository
 import com.redemastery.oldapi.pojav.PojavProfile
-import com.redemastery.oldapi.pojav.Tools
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import com.redemastery.oldapi.pojav.value.MinecraftAccount
-import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor(

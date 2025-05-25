@@ -2,6 +2,7 @@ package com.redemastery.launcher.presentation.features.launcher.ui.composable
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -37,6 +39,8 @@ import com.redemastery.design.theme.ApplicationTheme
 sealed class DownloadState {
     data object IDLE : DownloadState()
     data class DOWNLOADING(val progress: Int)  : DownloadState()
+    data object UPDATE  : DownloadState()
+    data object CHECKING  : DownloadState()
     data object ERROR : DownloadState()
     data object COMPLETED : DownloadState()
 }
@@ -53,17 +57,18 @@ fun DownloadStatusButton(
             is DownloadState.DOWNLOADING -> ApplicationTheme.colors.primary.copy(alpha = 0.8f)
             is DownloadState.COMPLETED -> ApplicationTheme.colors.secondary
             is DownloadState.ERROR -> Color.Red.copy(alpha = 0.8f)
+            is DownloadState.UPDATE -> ApplicationTheme.colors.primary.copy(alpha = 0.8f)
+            is DownloadState.CHECKING -> ApplicationTheme.colors.primary.copy(alpha = 0.8f)
         },
         animationSpec = tween(durationMillis = 500)
     )
 
     Box(
         modifier = modifier
-            .wrapContentSize()
             .clip(ApplicationTheme.shapes.medium)
             .background(animatedBackground)
             .clickable(
-                enabled = state == DownloadState.IDLE,
+                enabled = state == DownloadState.IDLE || state == DownloadState.ERROR,
                 onClick = onLaunchClicked
             )
     ) {
@@ -87,7 +92,6 @@ fun DownloadStatusButton(
 
                     is DownloadState.DOWNLOADING ->
                         CircularProgressIndicator(
-                            progress = { currentState.progress.toFloat() / 1f },
                             modifier = Modifier.size(ApplicationTheme.spacing.mediumLarge),
                             color = ApplicationTheme.colors.onSurface,
                             strokeWidth = 2.dp,
@@ -108,6 +112,21 @@ fun DownloadStatusButton(
                             contentDescription = "Error",
                             modifier = Modifier.size(ApplicationTheme.spacing.mediumLarge),
                         )
+                    is DownloadState.UPDATE ->
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(ApplicationTheme.spacing.mediumLarge),
+                            color = ApplicationTheme.colors.onSurface,
+                            strokeWidth = 2.dp,
+                            trackColor = ApplicationTheme.colors.surface,
+                        )
+
+                    is DownloadState.CHECKING ->
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(ApplicationTheme.spacing.mediumLarge),
+                            color = ApplicationTheme.colors.onSurface,
+                            strokeWidth = 2.dp,
+                            trackColor = ApplicationTheme.colors.surface,
+                        )
                 }
             }
 
@@ -119,24 +138,14 @@ fun DownloadStatusButton(
                     is DownloadState.DOWNLOADING -> "BAIXANDO... ${(state.progress).toInt()}%"
                     is DownloadState.COMPLETED -> "ABRINDO JOGO"
                     is DownloadState.ERROR -> "TENTE NOVAMENTE"
+                    is DownloadState.UPDATE -> "ATUALIZANDO MODS"
+                    is DownloadState.CHECKING -> "VERIFICANDO ATUALIZAÇÕES"
                 },
                 style = ApplicationTheme.typography.headlineSmall.copy(
                     color = ApplicationTheme.colors.onSurface,
                     fontWeight = FontWeight.Bold
                 )
             )
-
-            if (state is DownloadState.DOWNLOADING) {
-                Canvas(modifier = Modifier.wrapContentSize()) {
-                    drawArc(
-                        color = Color.Green.copy(alpha = 0.2f),
-                        startAngle = -90f,
-                        sweepAngle = 360f * state.progress,
-                        useCenter = false,
-                        style = Stroke(width = 4f)
-                    )
-                }
-            }
         }
     }
 }

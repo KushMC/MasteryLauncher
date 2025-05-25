@@ -15,7 +15,7 @@ sealed class IResult<out T> {
     }
 
     companion object {
-        inline fun <T> IResult<T>.watchStatus(
+        suspend inline  fun <T> IResult<T>.watchStatus(
             crossinline onSuccess: (T) -> Unit = {},
             crossinline onError: (Int, String) -> Unit = { _, _ -> },
             crossinline onFailed: (Throwable) -> Unit = {},

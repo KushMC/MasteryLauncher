@@ -1,4 +1,4 @@
-package com.redemastery.launcher.presentation.features.launcher.screen
+package com.redemastery.launcher.presentation.features.launcher.ui.domain.screen
 
 sealed class LauncherScreens {
 

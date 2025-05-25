@@ -1,4 +1,4 @@
-package com.redemastery.launcher.data.repository
+package com.redemastery.launcher.data.repository.storage
 
 import android.Manifest
 import android.content.Context
@@ -8,7 +8,6 @@ import android.os.Environment
 import androidx.core.content.ContextCompat
 import com.redemastery.launcher.core.IResult
 import com.redemastery.launcher.core.IResult.Companion.failed
-import com.redemastery.launcher.core.IResult.Companion.loading
 import com.redemastery.launcher.core.IResult.Companion.success
 import com.redemastery.launcher.domain.repository.storage.StorageRepository
 import com.redemastery.launcher.utils.MultiRTUtils.getRuntimes
@@ -28,7 +27,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 import androidx.core.content.edit
-import com.redemastery.launcher.utils.MultiRTUtils.forceReread
 import kotlinx.coroutines.flow.catch
 
 class StorageRepositoryImpl @Inject constructor(

@@ -123,6 +123,7 @@ public final class Tools {
     public static String DIR_ACCOUNT_NEW;
     public static String DIR_GAME_HOME = Environment.getExternalStorageDirectory().getAbsolutePath() + "/games/MasteryLauncher";
     public static String DIR_GAME_NEW;
+    public static String DIR_GAME_MODS;
     public static String GAME_PROFILES_FILE;
 
     // New since 3.0.0
@@ -207,7 +208,7 @@ public final class Tools {
         CTRLMAP_PATH = DIR_GAME_HOME + "/controlmap";
         CTRLDEF_FILE = DIR_GAME_HOME + "/controlmap/default.json";
         GAME_PROFILES_FILE = Tools.DIR_GAME_NEW + "/launcher_profiles.json";
-        
+        DIR_GAME_MODS = DIR_GAME_NEW + "/mods";
     }
 
     /**
@@ -1429,6 +1430,7 @@ public final class Tools {
         DIR_HOME_LIBRARY = DIR_GAME_NEW + "/libraries";
         ASSETS_PATH = DIR_GAME_NEW + "/assets";
         OBSOLETE_RESOURCES_PATH = DIR_GAME_NEW + "/resources";
+        DIR_GAME_MODS = DIR_GAME_NEW + "/mods";
     }
 
     public static boolean isDemoProfile(Context ctx){

@@ -40,7 +40,6 @@ import java.nio.ByteBuffer
 import java.util.Collections
 import java.util.zip.ZipFile
 import kotlin.math.max
-import kotlin.system.exitProcess
 
 class JavaGUILauncherActivity : BaseActivity() {
     private var mTextureView: AWTCanvasView? = null
@@ -116,13 +115,13 @@ class JavaGUILauncherActivity : BaseActivity() {
             val resourceUri = extras.getParcelable<Uri>("modUri")
 
 
-            when {
-                javaArgs != null -> {
-                    startModInstaller(null, javaArgs)
-                }
+            lifecycleScope.launch {
+                when {
+                    javaArgs != null -> {
+                        startModInstaller(null, javaArgs)
+                    }
 
-                resourceUri != null -> {
-                    lifecycleScope.launch {
+                    resourceUri != null -> {
                         startModInstallerWithUri(resourceUri)
                     }
                 }
@@ -199,6 +198,7 @@ class JavaGUILauncherActivity : BaseActivity() {
     }
 
     private fun startModInstaller(modFile: File?, javaArgs: String?) {
+
         Thread(Runnable {
             // Maybe replace with more advanced arg parsing logic later
             val argList = if (javaArgs != null) mutableListOf<String?>(

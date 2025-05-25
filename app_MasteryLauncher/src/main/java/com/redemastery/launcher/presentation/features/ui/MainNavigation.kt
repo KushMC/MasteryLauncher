@@ -43,7 +43,8 @@ import java.io.File
 @Composable
 fun MainNavigation(
     onOpenSettings: () -> Unit,
-    onInstallForge: () -> Unit
+    onInstallForge: () -> Unit,
+    onOpenInternet: (String) -> Unit,
 ) {
     val navController = rememberNavController()
     var currentScreen by remember {
@@ -114,7 +115,7 @@ fun MainNavigation(
 
             launcherComposable(
                 modifier = Modifier.fillMaxSize(),
-                navController = navController,
+                onOpenInternet = onOpenInternet
             )
         }
     }

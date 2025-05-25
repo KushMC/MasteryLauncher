@@ -2,6 +2,7 @@ package com.redemastery.launcher.presentation.features
 
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -15,6 +16,7 @@ import com.redemastery.oldapi.pojav.lifecycle.ContextExecutor
 import com.redemastery.oldapi.pojav.modloaders.ForgeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
+import androidx.core.net.toUri
 
 @AndroidEntryPoint
 class PreGameActivity : AppCompatActivity() {
@@ -34,10 +36,15 @@ class PreGameActivity : AppCompatActivity() {
                         }
                     },
                     onInstallForge = {
-                        val intent = Intent(this, JavaGUILauncherActivity::class.java).apply {
-                            ForgeUtils.addAutoInstallArgs(this, File(DIR_DATA, "forge_installers.jar"), true)
+                        Intent(this, JavaGUILauncherActivity::class.java).apply {
+                            ForgeUtils.addAutoInstallArgs(this@apply, File(DIR_DATA, "forge_installers.jar"), true)
+                            startActivity(this)
                         }
-                        startActivity(intent)
+                    },
+                    onOpenInternet = {
+                        Intent(Intent.ACTION_VIEW, it.toUri()).apply {
+                            startActivity(this@apply)
+                        }
                     }
                 )
             }

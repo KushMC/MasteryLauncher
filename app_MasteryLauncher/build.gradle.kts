@@ -23,7 +23,7 @@ android {
         minSdk = 27
         targetSdk = 35
         versionCode = 10
-        versionName = "MasteryLauncher 1.0"
+        versionName = "beta-1.0.0"
         multiDexEnabled = true
     }
 
@@ -58,8 +58,9 @@ android {
                 getDefaultProguardFile("proguard-android.txt"),
                 "proguard-rules.pro"
             )
+            resValue("string", "application_package", "com.redemastery.launcher")
             resValue("string", "storageProviderAuthorities", "com.redemastery.oldapi.pojav.scoped.gamefolder")
-            resValue("string", "application_package", "com.redemastery.oldapi.pojav")
+            resValue("string", "shareProviderAuthority", "com.redemastery.oldapi.pojav.scoped.controlfolder")
         }
     }
 
@@ -126,25 +127,25 @@ dependencies {
 
     implementation(project(":design"))
 
-    implementation("javax.annotation:javax.annotation-api:1.3.2")
-    implementation("commons-codec:commons-codec:1.15")
-    implementation("androidx.preference:preference:1.2.0")
-    implementation("androidx.drawerlayout:drawerlayout:1.2.0")
-    implementation("androidx.viewpager2:viewpager2:1.1.0-beta01")
-    implementation("androidx.annotation:annotation:1.5.0")
+    implementation(libs.javax.annotation.api)
+    implementation(libs.commons.codec)
+    implementation(libs.androidx.preference)
+    implementation(libs.androidx.drawerlayout)
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.annotation)
 
-    implementation("com.github.duanhong169:checkerboarddrawable:1.0.2")
-    implementation("com.github.PojavLauncherTeam:portrait-sdp:ed33e89cbc")
-    implementation("com.github.PojavLauncherTeam:portrait-ssp:6c02fd739b")
-    implementation("com.github.Mathias-Boulay:ExtendedView:1.0.0")
-    implementation("com.github.Mathias-Boulay:android_gamepad_remapper:2.0.3")
-    implementation("com.github.Mathias-Boulay:virtual-joystick-android:1.14")
+    implementation(libs.checkerboarddrawable)
+    implementation(libs.portrait.sdp)
+    implementation(libs.portrait.ssp)
+    implementation(libs.extendedview)
+    implementation(libs.android.gamepad.remapper)
+    implementation(libs.virtual.joystick.android)
 
-    implementation("org.tukaani:xz:1.8")
-    implementation("net.sourceforge.htmlcleaner:htmlcleaner:2.6.1")
-    implementation("com.bytedance:bytehook:1.0.9")
+    implementation(libs.xz)
+    implementation(libs.htmlcleaner)
+    implementation(libs.bytehook)
 
-    implementation("io.coil-kt:coil-gif:2.4.0")
+    implementation(libs.coil.gif)
     implementation(libs.coil.compose)
     testImplementation(libs.junit)
 
@@ -195,6 +196,10 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     kapt(libs.room.compiler)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar", "*.aar"))))
 }
