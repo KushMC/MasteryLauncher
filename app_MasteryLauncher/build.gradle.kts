@@ -23,7 +23,7 @@ android {
         minSdk = 27
         targetSdk = 35
         versionCode = 10
-        versionName = "beta-1.0.0"
+        versionName = "1.0.0"
         multiDexEnabled = true
     }
 

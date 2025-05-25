@@ -4,5 +4,6 @@ import javax.inject.Inject
 
 data class ServerStatusUseCase @Inject constructor(
     val get: GetServerStatusUseCase,
-    val checkVersion: CheckUpdateInfoVersionUseCase
+    val checkVersion: CheckUpdateInfoVersionUseCase,
+    val getUpdater: GetServerUpdatersUseCase
 )

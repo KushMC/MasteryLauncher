@@ -13,6 +13,7 @@ import com.redemastery.launcher.domain.usecase.login.LoginPirateUseCase
 import com.redemastery.launcher.domain.usecase.login.LoginUseCase
 import com.redemastery.launcher.domain.usecase.server.CheckUpdateInfoVersionUseCase
 import com.redemastery.launcher.domain.usecase.server.GetServerStatusUseCase
+import com.redemastery.launcher.domain.usecase.server.GetServerUpdatersUseCase
 import com.redemastery.launcher.domain.usecase.server.ServerStatusUseCase
 import com.redemastery.launcher.domain.usecase.storage.PrepareLauncherUseCase
 import com.redemastery.launcher.domain.usecase.storage.StorageUseCase
@@ -66,7 +67,8 @@ object UseCaseSingletonModule {
     ): ServerStatusUseCase {
         return ServerStatusUseCase(
             get = GetServerStatusUseCase(repository),
-            checkVersion = CheckUpdateInfoVersionUseCase(repository)
+            checkVersion = CheckUpdateInfoVersionUseCase(repository),
+            getUpdater = GetServerUpdatersUseCase(repository)
         )
     }
 

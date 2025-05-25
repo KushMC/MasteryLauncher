@@ -48,8 +48,6 @@ class ContextAwareDoneListenerObserver(
             downloadState = DownloadState.COMPLETED
             val intent = createGameStartIntent(activity)
             activity.startActivity(intent)
-            downloadState = DownloadState.IDLE
-            activity.finish()
         } catch (e: Throwable) {
             downloadState = DownloadState.ERROR
         }

@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 @HiltViewModel
@@ -26,12 +27,14 @@ class LauncherViewModel @Inject constructor(
 ) : BaseViewModel<LauncherState, LauncherEvent>(LauncherState()) {
 
     private var serverStatusJob: Job? = null
+    private var CheckingVersionJob: Job? = null
 
     private val _snackbarMessages = MutableSharedFlow<String>()
     val snackbarMessages = _snackbarMessages.asSharedFlow()
 
     init {
-        onCheckingVersion()
+        onGetServerUpdater()
+        startCheckingVersionPolling()
         onLoadUser()
         onLoadConfig()
         startServerStatusPolling()
@@ -53,20 +56,35 @@ class LauncherViewModel @Inject constructor(
         }
     }
 
-    private fun onCheckingVersion(){
+    private fun onGetServerUpdater() {
         viewModelScope.launch {
-            serverStatusUseCase.checkVersion(Unit).collect {
+            serverStatusUseCase.getUpdater(Unit).collect {
                 it.watchStatus(
-                    onSuccess = { data ->
+                    onSuccess = { updater ->
                         _state.update {
                             it.copy(
-                                shopLink = data.shopLink,
-                                discordLink = data.discordInvite
+                                shopLink = updater.shopLink,
+                                discordLink = updater.discordInvite,
+                                isBeta = updater.isBeta
                             )
                         }
                     },
                     onFailed = {
-                        showSnackbar(
+                        showToast(
+                            "Não foi possivel baixar os mods do servidor. Tente novamente"
+                        )
+                    }
+                )
+            }
+        }
+    }
+
+    private fun onCheckingVersion(){
+        viewModelScope.launch {
+            serverStatusUseCase.checkVersion(Unit).collect {
+                it.watchStatus(
+                    onFailed = {
+                        showToast(
                             "Não foi possivel baixar os mods do servidor.\nTente novamente"
                         )
                     }
@@ -93,7 +111,7 @@ class LauncherViewModel @Inject constructor(
                                 options = it.options
                             )
                         }
-                        showSnackbar(message = "Erro ao salvar configurações")
+                        showToast(message = "Erro ao salvar configurações")
                     }
                 )
             }
@@ -139,23 +157,40 @@ class LauncherViewModel @Inject constructor(
 
         serverStatusJob = viewModelScope.launch {
             while (isActive) {
-                serverStatusUseCase.get(Unit).collect {
-                    it.watchStatus(
-                        onSuccess = { status ->
-                            _state.update {
-                                it.copy(
-                                    serverStatus = status
-                                )
-                            }
-                        }
-                    )
-                }
-                delay(20.seconds)
+                onGetServerStatus()
+                delay(5.minutes)
             }
         }
     }
 
-    fun showSnackbar(message: String) {
+
+    private fun startCheckingVersionPolling() {
+        serverStatusJob?.cancel()
+
+        serverStatusJob = viewModelScope.launch {
+            while (isActive) {
+                onCheckingVersion()
+                delay(5.minutes)
+            }
+        }
+    }
+
+
+    private suspend fun onGetServerStatus() {
+        serverStatusUseCase.get(Unit).collect {
+            it.watchStatus(
+                onSuccess = { status ->
+                    _state.update {
+                        it.copy(
+                            serverStatus = status
+                        )
+                    }
+                }
+            )
+        }
+    }
+
+    fun showToast(message: String) {
         viewModelScope.launch {
             _snackbarMessages.emit(message)
         }

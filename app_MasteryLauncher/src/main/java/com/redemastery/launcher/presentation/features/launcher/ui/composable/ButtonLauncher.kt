@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.redemastery.design.theme.ApplicationTheme
 
@@ -54,11 +55,11 @@ fun DownloadStatusButton(
     val animatedBackground by animateColorAsState(
         targetValue = when (state) {
             is DownloadState.IDLE -> ApplicationTheme.colors.tertiary
-            is DownloadState.DOWNLOADING -> ApplicationTheme.colors.primary.copy(alpha = 0.8f)
-            is DownloadState.COMPLETED -> ApplicationTheme.colors.secondary
+            is DownloadState.DOWNLOADING -> ApplicationTheme.colors.primaryContainer.copy(alpha = 0.8f)
+            is DownloadState.COMPLETED -> ApplicationTheme.colors.tertiary
             is DownloadState.ERROR -> Color.Red.copy(alpha = 0.8f)
-            is DownloadState.UPDATE -> ApplicationTheme.colors.primary.copy(alpha = 0.8f)
-            is DownloadState.CHECKING -> ApplicationTheme.colors.primary.copy(alpha = 0.8f)
+            is DownloadState.UPDATE -> ApplicationTheme.colors.background.copy(alpha = 0.8f)
+            is DownloadState.CHECKING -> ApplicationTheme.colors.primaryContainer.copy(alpha = 0.8f)
         },
         animationSpec = tween(durationMillis = 500)
     )
@@ -75,6 +76,7 @@ fun DownloadStatusButton(
         Row(
             modifier = Modifier
                 .wrapContentSize()
+                .animateContentSize()
                 .padding(ApplicationTheme.spacing.medium)
                 .alpha(if (state is DownloadState.DOWNLOADING) 0.7f else 1f),
             verticalAlignment = Alignment.CenterVertically,
@@ -133,6 +135,7 @@ fun DownloadStatusButton(
             Spacer(Modifier.width(8.dp))
 
             Text(
+                modifier = Modifier.animateContentSize(),
                 text = when (state) {
                     is DownloadState.IDLE -> "JOGAR"
                     is DownloadState.DOWNLOADING -> "BAIXANDO... ${(state.progress).toInt()}%"
@@ -144,7 +147,8 @@ fun DownloadStatusButton(
                 style = ApplicationTheme.typography.headlineSmall.copy(
                     color = ApplicationTheme.colors.onSurface,
                     fontWeight = FontWeight.Bold
-                )
+                ),
+                textAlign = TextAlign.End
             )
         }
     }

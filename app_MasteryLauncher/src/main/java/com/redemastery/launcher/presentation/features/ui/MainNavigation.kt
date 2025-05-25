@@ -45,6 +45,7 @@ fun MainNavigation(
     onOpenSettings: () -> Unit,
     onInstallForge: () -> Unit,
     onOpenInternet: (String) -> Unit,
+    onLaunchGame: () -> Unit
 ) {
     val navController = rememberNavController()
     var currentScreen by remember {
@@ -115,7 +116,8 @@ fun MainNavigation(
 
             launcherComposable(
                 modifier = Modifier.fillMaxSize(),
-                onOpenInternet = onOpenInternet
+                onOpenInternet = onOpenInternet,
+                onLaunchGame = onLaunchGame,
             )
         }
     }

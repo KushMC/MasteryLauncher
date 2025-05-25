@@ -12,4 +12,5 @@ data class LauncherState(
     val serverStatus: ServerStatus? = null,
     val discordLink: String? = null,
     val shopLink: String? = null,
+    val isBeta: Boolean = false,
 )

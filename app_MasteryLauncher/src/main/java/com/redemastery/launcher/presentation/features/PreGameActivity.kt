@@ -17,6 +17,7 @@ import com.redemastery.oldapi.pojav.modloaders.ForgeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import androidx.core.net.toUri
+import com.redemastery.oldapi.pojav.LauncherActivity.launchMine
 
 @AndroidEntryPoint
 class PreGameActivity : AppCompatActivity() {
@@ -45,6 +46,9 @@ class PreGameActivity : AppCompatActivity() {
                         Intent(Intent.ACTION_VIEW, it.toUri()).apply {
                             startActivity(this@apply)
                         }
+                    },
+                    onLaunchGame = {
+                        launchMine(this)
                     }
                 )
             }

@@ -8,13 +8,26 @@ data class UpdateInfoResponse(
     @SerializedName("url") var url: String?,
     @SerializedName("shop_link") var shopLink: String?,
     @SerializedName("discord_invite") var discordInvite: String?,
+    @SerializedName("is_beta") var isBeta: Boolean?,
+    @SerializedName("server_ip") var serverIp: String?,
+    @SerializedName("server_port") var serverPort: Int?,
 ){
     fun toUpdateInfo(): UpdateInfo {
         return UpdateInfo(
             version = this.version,
             url = this.url,
             shopLink = this.shopLink,
-            discordInvite = this.discordInvite
+            discordInvite = this.discordInvite,
+            isBeta = this.isBeta,
+            serverIp = this.serverIp,
+            serverPort = this.serverPort
+        )
+    }
+
+    fun getVersionAndUrl() : UpdateInfo {
+        return UpdateInfo(
+            version = this.version,
+            url = this.url,
         )
     }
 }

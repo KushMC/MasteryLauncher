@@ -13,6 +13,7 @@ import com.redemastery.launcher.di.network.qualifier.MCStatusAPI
 import com.redemastery.launcher.di.network.qualifier.RedeMastery
 import com.redemastery.launcher.domain.model.Motd
 import com.redemastery.launcher.domain.model.Players
+import com.redemastery.launcher.domain.model.ServerUpdate
 import com.redemastery.launcher.domain.model.ServerStatus
 import com.redemastery.launcher.domain.model.UpdateInfo
 import com.redemastery.launcher.domain.model.Version
@@ -20,7 +21,6 @@ import com.redemastery.launcher.domain.repository.server.ServerRepository
 import com.redemastery.launcher.presentation.features.launcher.ui.composable.DownloadState
 import com.redemastery.launcher.presentation.features.launcher.ui.context_aware.ContextAwareDoneListenerObserver.Companion.downloadState
 import com.redemastery.oldapi.pojav.Tools.DIR_GAME_MODS
-import com.redemastery.oldapi.pojav.Tools.DIR_GAME_NEW
 import com.redemastery.oldapi.pojav.prefs.LauncherPreferences
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -67,88 +67,92 @@ class ServerRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUpdateInfo(): Flow<IResult<UpdateInfo>> {
-        return flow {
-            downloadState = DownloadState.CHECKING
-            val currentVersion = LauncherPreferences.DEFAULT_PREF.getString("version", "") ?: ""
+    override suspend fun getServerUpdate(): Flow<IResult<ServerUpdate>> = flow {
 
-
-            performNetworkCall {
-                updateApi.getUpdaterInfo()
-            }.collect {
-                when (it) {
-                    is IResult.Success -> {
-                        val updateInfo = it.data.toUpdateInfo()
-
-                        if (currentVersion == updateInfo.version) {
-                            downloadState = DownloadState.IDLE
-                            emit(success(updateInfo))
-                            return@collect
-                        }
-
-                        if(updateInfo.url == null){
-                            emit(failed(NullPointerException("url not found")))
-                            return@collect
-                        }
-
-                        downloadState = DownloadState.UPDATE
-                        val file = File(DIR_GAME_MODS)
-                        if (file.exists()) {
-                            file.listFiles()?.forEach {
-                                it.delete()
-                            }
-                        }else{
-                            file.mkdirs()
-                        }
-
-
-                        performNetworkCallDownloadAndUnzip(
-                            fileName = "mods.zip",
-                            targetDirectory = File(DIR_GAME_MODS),
-                            networkAPICall = { updateApi.download(updateInfo.url) }
-                        ).collect {
-                            when (it) {
-                                is IResult.Success -> {
-                                    downloadState = DownloadState.IDLE
-                                    LauncherPreferences.DEFAULT_PREF.edit {
-                                        putString("version", updateInfo.version)
-                                    }
-                                    emit(success(updateInfo))
-                                }
-
-                                is IResult.Failed -> {
-                                    downloadState = DownloadState.ERROR
-                                    emit(success(updateInfo))
-                                }
-
-                                is IResult.Loading -> {
-                                    downloadState = DownloadState.DOWNLOADING(
-                                        it.progress?.toInt()?.times(100) ?: 0
-                                    )
-                                    emit(loading(it.message, it.progress))
-                                }
-
-                                else -> {
-
-                                }
-                            }
-                        }
-
-                    }
-
-                    is IResult.Failed -> {
-                        downloadState = DownloadState.ERROR
-                        emit(failed(it.exception))
-                    }
-
-                    is IResult.Loading -> {
-                        downloadState = DownloadState.UPDATE
-                        emit(loading(it.message, it.progress))
-                    }
-
-                    else -> {}
+        performNetworkCall { updateApi.getUpdaterInfo() }.collect { result ->
+            when (result) {
+                is IResult.Success -> {
+                    val data = result.data
+                    emit(success(ServerUpdate(data.shopLink, data.discordInvite, data.isBeta == true, data.serverIp, data.serverPort)))
                 }
+                is IResult.Failed -> emit(failed(result.exception))
+                else -> {}
             }
-        }.flowOn(Dispatchers.IO)
+        }
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun getUpdateInfo(): Flow<IResult<UpdateInfo>> = flow {
+        emit(loading("Verificando versão..."))
+
+        checkAndDownloadUpdateIfNeeded().collect { result ->
+            when (result) {
+                is IResult.Success -> emit(success(result.data))
+                is IResult.Failed -> emit(failed(result.exception))
+                is IResult.Loading -> emit(loading(result.message, result.progress))
+                else -> {}
+            }
+        }
+    }.flowOn(Dispatchers.IO)
+
+
+    private suspend fun checkAndDownloadUpdateIfNeeded(): Flow<IResult<UpdateInfo>> = flow {
+        downloadState = DownloadState.CHECKING
+
+        val currentVersion = LauncherPreferences.DEFAULT_PREF.getString("version", "") ?: ""
+
+        performNetworkCall { updateApi.getUpdaterInfo() }.collect { result ->
+            when (result) {
+                is IResult.Success -> {
+                    val updateInfo = result.data.getVersionAndUrl()
+
+                    if (currentVersion == updateInfo.version) {
+                        downloadState = DownloadState.IDLE
+                        return@collect
+                    }
+
+                    if (updateInfo.url == null) {
+                        emit(failed(NullPointerException("URL não encontrada.")))
+                        return@collect
+                    }
+
+                    downloadState = DownloadState.UPDATE
+                    val modsDir = File(DIR_GAME_MODS)
+                    if (modsDir.exists()) {
+                        modsDir.listFiles()?.map { it.delete() }
+                    } else {
+                        modsDir.mkdirs()
+                    }
+
+                    performNetworkCallDownloadAndUnzip(
+                        fileName = "mods.zip",
+                        targetDirectory = modsDir,
+                        networkAPICall = { updateApi.download(updateInfo.url) }
+                    ).collect { downloadResult ->
+                        when (downloadResult) {
+                            is IResult.Success -> {
+                                LauncherPreferences.DEFAULT_PREF.edit {
+                                    putString("version", updateInfo.version)
+                                }
+                                downloadState = DownloadState.IDLE
+                            }
+
+                            is IResult.Failed -> {
+                                emit(failed(downloadResult.exception))
+                                downloadState = DownloadState.ERROR
+                            }
+
+                            else -> {}
+                        }
+                    }
+                }
+
+                is IResult.Failed -> {
+                    downloadState = DownloadState.ERROR
+                    emit(failed(result.exception))
+                }
+
+                else -> {}
+            }
+        }
     }
 }

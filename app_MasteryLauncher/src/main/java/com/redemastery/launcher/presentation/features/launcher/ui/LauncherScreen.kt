@@ -5,6 +5,12 @@ import android.app.Activity
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -13,7 +19,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,6 +33,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Podcasts
@@ -53,27 +59,35 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.redemastery.design.composable.LogoMasteryLauncher
+import com.redemastery.design.composable.shimmerLoading
 import com.redemastery.design.theme.ApplicationTheme
 import com.redemastery.launcher.R
 import com.redemastery.launcher.core.parseMinecraftColorCodes
 import com.redemastery.launcher.domain.model.Motd
 import com.redemastery.launcher.presentation.features.launcher.ui.composable.DownloadState
 import com.redemastery.launcher.presentation.features.launcher.ui.composable.DownloadStatusButton
+import com.redemastery.launcher.presentation.features.launcher.ui.composable.Shimmer3DImage
 import com.redemastery.launcher.presentation.features.launcher.ui.context_aware.ContextAwareDoneListenerObserver
 import com.redemastery.launcher.presentation.features.launcher.ui.domain.model.LauncherEvent
 import com.redemastery.launcher.presentation.features.launcher.ui.domain.screen.LauncherScreens
@@ -85,6 +99,7 @@ import java.util.UUID
 @Composable
 fun LauncherScreen(
     onOpenInternet: (String) -> Unit,
+    onLaunchGame: () -> Unit
 ) {
 
     val viewModel = hiltViewModel<LauncherViewModel>()
@@ -111,6 +126,7 @@ fun LauncherScreen(
             TopBar(
                 username = account?.username,
                 motd = serverStatus?.motd,
+                isBeta = state.isBeta,
                 showMotd = screens == LauncherScreens.LaunchGame,
                 onSettingsClick = {
                     screens = LauncherScreens.Settings
@@ -128,19 +144,20 @@ fun LauncherScreen(
                     state.discordLink?.let {
                         onOpenInternet(it)
                     } ?: run {
-                        viewModel.showSnackbar("Link não encontrado.")
+                        viewModel.showToast("Link não encontrado.")
                     }
                 },
                 onShop = {
                     state.shopLink?.let {
                         onOpenInternet(it)
                     } ?: run {
-                        viewModel.showSnackbar("Link não encontrado.")
+                        viewModel.showToast("Link não encontrado.")
                     }
                 },
                 onRetryDownload = {
                     viewModel.onEvent(LauncherEvent.RetryDownload)
-                }
+                },
+                onLaunchGame = onLaunchGame
             )
         }
     ) { _ ->
@@ -195,7 +212,8 @@ private fun BottomBar(
     playerOnline: Int,
     onDiscord: () -> Unit,
     onShop: () -> Unit,
-    onRetryDownload: () -> Unit
+    onRetryDownload: () -> Unit,
+    onLaunchGame: () -> Unit
 ) {
 
     var downloadState = ContextAwareDoneListenerObserver.downloadState
@@ -288,7 +306,7 @@ private fun BottomBar(
                     if(downloadState == DownloadState.ERROR){
                         onRetryDownload()
                     }else{
-                        launchMine(context)
+                        onLaunchGame()
                     }
                 }
             )
@@ -341,6 +359,7 @@ fun TopBar(
     username: String?,
     motd: Motd?,
     showMotd: Boolean,
+    isBeta: Boolean = false,
     onSettingsClick: () -> Unit,
     onUserClick: () -> Unit = {},
 ) {
@@ -398,7 +417,52 @@ fun TopBar(
                     }
                 }
             }
-            // BOTÕES
+
+            if(isBeta) {
+                Box(modifier = Modifier.wrapContentSize()) {
+                    val transition = rememberInfiniteTransition()
+                    val shimmerTranslate by transition.animateFloat(
+                        initialValue = -300f,
+                        targetValue = 1000f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(1200, easing = LinearEasing),
+                            repeatMode = RepeatMode.Restart
+                        )
+                    )
+
+                    val shimmerBrush = Brush.linearGradient(
+                        colors = listOf(
+                            Color.Transparent,
+                            Color.White.copy(alpha = 0.4f),
+                            Color.Transparent
+                        ),
+                        start = Offset(shimmerTranslate, 0f),
+                        end = Offset(shimmerTranslate + 200f, 200f)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(16.dp))
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.beta),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillBounds,
+                            modifier = Modifier
+                                .height(ApplicationTheme.spacing.extraLarge)
+                                .width(ApplicationTheme.spacing.enormous)
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .matchParentSize()
+                                .background(shimmerBrush)
+                                .zIndex(1f)
+                        )
+                    }
+                }
+            }
+
+
             Row(verticalAlignment = Alignment.CenterVertically) {
 
                 OutlinedButton(

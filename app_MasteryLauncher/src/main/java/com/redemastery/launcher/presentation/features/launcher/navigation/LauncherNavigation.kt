@@ -11,10 +11,12 @@ import com.redemastery.launcher.presentation.features.launcher.ui.LauncherScreen
 fun NavGraphBuilder.launcherComposable(
     modifier: Modifier = Modifier,
     onOpenInternet: (String) -> Unit,
+    onLaunchGame: () -> Unit
 ) {
     this.appComposable(destination = Destination.Launcher) {
         LauncherScreen(
-            onOpenInternet = onOpenInternet
+            onOpenInternet = onOpenInternet,
+            onLaunchGame = onLaunchGame
         )
     }
 }
