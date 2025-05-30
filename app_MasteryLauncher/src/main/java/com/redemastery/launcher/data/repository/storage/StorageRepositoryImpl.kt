@@ -60,10 +60,6 @@ class StorageRepositoryImpl @Inject constructor(
         return flow {
             emit(IResult.Loading(progress = 0f, message = "Verificando asset '$fileName'"))
             val destFile = File(DIR_DATA, fileName)
-            if (destFile.exists()) {
-                emit(success(destFile.absolutePath))
-                return@flow
-            }
 
             val assetManager = context.assets
             val inputStream = assetManager.open(fileName)
