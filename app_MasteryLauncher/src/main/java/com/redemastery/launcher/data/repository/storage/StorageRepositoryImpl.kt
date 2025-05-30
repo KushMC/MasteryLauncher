@@ -131,7 +131,7 @@ class StorageRepositoryImpl @Inject constructor(
     }
 
     override fun isRuntimeInstalled(): Boolean {
-        return getRuntimes().isNotEmpty()
+        return getRuntimes().isNotEmpty() && getRuntimes()[0].versionString != null
     }
 
     override fun isForgeInstalled(versionName: String): Boolean {

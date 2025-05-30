@@ -334,8 +334,8 @@ public class JREUtils {
         System.out.println(JVMArgs);
 
         initJavaRuntime(runtimeHome);
-        JREUtils.setupExitMethod(activity.getApplication());
         JREUtils.initializeHooks();
+        JREUtils.setupExitMethod(activity.getApplication());
         chdir(gameDirectory == null ? Tools.DIR_GAME_NEW : gameDirectory.getAbsolutePath());
         userArgs.add(0,"java"); //argv[0] is the program name according to C standard.
 

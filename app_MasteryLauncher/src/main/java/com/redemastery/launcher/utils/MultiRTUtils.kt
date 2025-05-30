@@ -98,6 +98,7 @@ object MultiRTUtils {
             rtVersion = Tools.read(am.open("components/jre/version"))
         } catch (e: IOException) {
             Log.e("JREAuto", "JRE não incluído neste APK.", e)
+            emit(loading(message = "JRE não incluído neste APK.", progress = 0f))
         }
         emit(IResult.Loading("Comparando versões", 0.1f))
         val exact = getExactJreName(8)
@@ -125,9 +126,6 @@ object MultiRTUtils {
         ).collect {
             when (it) {
                 is IResult.Success -> {
-                    postPrepare("Internal")
-                    getRuntimes()
-                    forceReread(getRuntimes()[0].name)
                     emit(IResult.Loading("Pós-preparação interna", 0.8f))
                     emit(success(Unit))
                 }
@@ -221,6 +219,9 @@ object MultiRTUtils {
         FileOutputStream(File(dest, "bit_version")).use { fos ->
             fos.write(version.toByteArray())
         }
+        postPrepare("Internal")
+
+
         forceReread(name)
         emit(success(Unit))
     }.catch { e ->
