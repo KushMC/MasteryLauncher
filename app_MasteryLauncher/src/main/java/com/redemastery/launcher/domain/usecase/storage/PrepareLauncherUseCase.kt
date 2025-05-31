@@ -4,11 +4,15 @@ import com.redemastery.launcher.core.IResult
 import com.redemastery.launcher.core.IResult.Companion.failed
 import com.redemastery.launcher.core.IResult.Companion.loading
 import com.redemastery.launcher.core.IResult.Companion.success
+import com.redemastery.launcher.core.IResult.Companion.watchStatus
 import com.redemastery.launcher.core.UseCase
 import com.redemastery.launcher.domain.repository.storage.StorageRepository
+import com.redemastery.oldapi.pojav.Tools
+import com.redemastery.oldapi.pojav.Tools.DIR_DATA
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
+import java.io.File
 import javax.inject.Inject
 
 class PermissionDenied : Exception()
@@ -34,6 +38,13 @@ class PrepareLauncherUseCase @Inject constructor(
 
         emit(loading("Carregando preferências"))
         repository.loadPreferencesAndUnpack()
+        emit(loading("Descompactando assets"))
+        val serverDat = File(Tools.DIR_GAME_NEW, "servers.dat")
+        repository.copyRuntimeAsset(serverDat).collect {
+            if(it is IResult.Loading){
+                emit(loading(it.message, it.progress))
+            }
+        }
 
         emit(loading("Verificando JRE"))
         val isRuntimeReady = repository.isRuntimeInstalled()
@@ -59,7 +70,7 @@ class PrepareLauncherUseCase @Inject constructor(
 
         if (!isForgeInstalled) {
             emit(loading("Copiando Forge"))
-            repository.copyRuntimeAsset("forge_installers.jar").collect { result ->
+            repository.copyRuntimeAsset(File(DIR_DATA, "forge_installers.jar")).collect { result ->
                 when (result) {
                     is IResult.Success -> emit(success(true))
                     is IResult.Loading -> emit(loading(result.message, result.progress))

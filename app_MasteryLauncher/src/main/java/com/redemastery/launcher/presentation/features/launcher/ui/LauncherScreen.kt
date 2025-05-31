@@ -78,6 +78,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.redemastery.design.composable.LogoMasteryLauncher
 import com.redemastery.design.composable.shimmerLoading
@@ -364,8 +365,15 @@ fun TopBar(
     onUserClick: () -> Unit = {},
 ) {
 
-    val imageUrl = "https://crafatar.com/renders/head/${UUID.randomUUID()}"
+    val uuid = remember { UUID.randomUUID() }
+    val imageUrl = "https://crafatar.com/renders/head/$uuid"
 
+    val painter = rememberAsyncImagePainter(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(imageUrl)
+            .crossfade(true)
+            .build()
+    )
 
     Box(
         Modifier

@@ -56,10 +56,10 @@ class StorageRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun copyRuntimeAsset(fileName: String): Flow<IResult<String>> {
+    override suspend fun copyRuntimeAsset(destFile: File): Flow<IResult<String>> {
         return flow {
+            val fileName = destFile.name
             emit(IResult.Loading(progress = 0f, message = "Verificando asset '$fileName'"))
-            val destFile = File(DIR_DATA, fileName)
 
             val assetManager = context.assets
             val inputStream = assetManager.open(fileName)

@@ -104,19 +104,28 @@ class ServerRepositoryImpl @Inject constructor(
             when (result) {
                 is IResult.Success -> {
                     val updateInfo = result.data.getVersionAndUrl()
+                    val modsDir = File(DIR_GAME_MODS)
 
-                    if (currentVersion == updateInfo.version) {
+                    fun checkMods(): Boolean {
+                        return when {
+                            !modsDir.exists() -> false
+                            modsDir.listFiles()?.isEmpty() == true -> false
+                            else -> true
+                        }
+                    }
+
+                    if (currentVersion == updateInfo.version && checkMods()) {
                         downloadState = DownloadState.IDLE
                         return@collect
                     }
 
                     if (updateInfo.url == null) {
                         emit(failed(NullPointerException("URL não encontrada.")))
+                        downloadState = DownloadState.ERROR
                         return@collect
                     }
 
                     downloadState = DownloadState.UPDATE
-                    val modsDir = File(DIR_GAME_MODS)
                     if (modsDir.exists()) {
                         modsDir.listFiles()?.map { it.delete() }
                     } else {
@@ -130,6 +139,7 @@ class ServerRepositoryImpl @Inject constructor(
                     ).collect { downloadResult ->
                         when (downloadResult) {
                             is IResult.Success -> {
+
                                 LauncherPreferences.DEFAULT_PREF.edit {
                                     putString("version", updateInfo.version)
                                 }
