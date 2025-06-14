@@ -17,7 +17,7 @@ class UserAccount(
     var clientToken: String = "0",
     var profileId: String = "00000000-0000-0000-0000-000000000000",
     var username: String = "Steve",
-    var selectedVersion: String = "1.7.10",
+    var selectedVersion: String = "1.12.2-forge-14.23.5.2860",
     var isMicrosoft: Boolean = false,
     var msaRefreshToken: String = "0",
     var xuid: String? = null,
@@ -65,7 +65,7 @@ class UserAccount(
             if (clientToken.isBlank()) clientToken = "0"
             if (profileId.isBlank()) profileId = "00000000-0000-0000-0000-000000000000"
             if (username.isBlank()) username = "Steve"
-            if (selectedVersion.isBlank()) selectedVersion = "1.7.10"
+            if (selectedVersion.isBlank()) selectedVersion = "1.12.2"
             if (msaRefreshToken.isBlank()) msaRefreshToken = "0"
         }
 

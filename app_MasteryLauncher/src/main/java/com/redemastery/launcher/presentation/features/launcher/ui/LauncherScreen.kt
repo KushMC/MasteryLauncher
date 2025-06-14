@@ -33,7 +33,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Podcasts
@@ -62,11 +61,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -76,23 +73,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.redemastery.design.composable.LogoMasteryLauncher
-import com.redemastery.design.composable.shimmerLoading
 import com.redemastery.design.theme.ApplicationTheme
 import com.redemastery.launcher.R
 import com.redemastery.launcher.core.parseMinecraftColorCodes
 import com.redemastery.launcher.domain.model.Motd
+import com.redemastery.launcher.presentation.compose.lifecycle.LifeCycleEffect
 import com.redemastery.launcher.presentation.features.launcher.ui.composable.DownloadState
 import com.redemastery.launcher.presentation.features.launcher.ui.composable.DownloadStatusButton
-import com.redemastery.launcher.presentation.features.launcher.ui.composable.Shimmer3DImage
 import com.redemastery.launcher.presentation.features.launcher.ui.context_aware.ContextAwareDoneListenerObserver
 import com.redemastery.launcher.presentation.features.launcher.ui.domain.model.LauncherEvent
 import com.redemastery.launcher.presentation.features.launcher.ui.domain.screen.LauncherScreens
-import com.redemastery.oldapi.pojav.LauncherActivity.launchMine
+import com.redemastery.oldapi.pojav.JMinecraftVersionList
+import com.redemastery.oldapi.pojav.extra.ExtraConstants
+import com.redemastery.oldapi.pojav.extra.ExtraCore
+import com.redemastery.oldapi.pojav.tasks.AsyncVersionList
+import com.redemastery.oldapi.pojav.tasks.AsyncVersionList.VersionDoneListener
 import java.util.UUID
 
 
@@ -507,6 +506,18 @@ fun TopBar(
             }
         }
     }
+
+    LifeCycleEffect(
+        onCreate = {
+            AsyncVersionList().getVersionList(VersionDoneListener { versions: JMinecraftVersionList? ->
+                ExtraCore.setValue(
+                    ExtraConstants.RELEASE_TABLE,
+                    versions
+                )
+            }, false)
+
+        }
+    )
 }
 
 @Composable

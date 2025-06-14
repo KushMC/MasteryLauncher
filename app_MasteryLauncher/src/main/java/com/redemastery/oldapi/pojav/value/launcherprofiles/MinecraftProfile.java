@@ -34,7 +34,7 @@ public class MinecraftProfile {
 	public static MinecraftProfile getDefaultProfile(){
 		MinecraftProfile defaultProfile = new MinecraftProfile();
 		defaultProfile.name = "Default";
-		defaultProfile.lastVersionId = "1.7.10-Forge10.13.4.1614-1.7.10";
+		defaultProfile.lastVersionId = "1.12.2";
 		return defaultProfile;
 	}
 

@@ -66,7 +66,7 @@ class PrepareLauncherUseCase @Inject constructor(
 
     private suspend fun FlowCollector<IResult<Boolean>>.checkForgeInstalled() {
         emit(loading("Verificando Forge 1.7.10"))
-        val isForgeInstalled = repository.isForgeInstalled("1.7.10-Forge10.13.4.1614-1.7.10")
+        val isForgeInstalled = repository.isForgeInstalled("1.12.2-forge-14.23.5.2860")
 
         if (!isForgeInstalled) {
             emit(loading("Copiando Forge"))

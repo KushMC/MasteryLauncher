@@ -22,7 +22,7 @@ public class MinecraftAccount {
     public String clientToken = "0"; // clientID: refresh and invalidate
     public String profileId = "00000000-0000-0000-0000-000000000000"; // profile UUID, for obtaining skin
     public String username = "Steve";
-    public String selectedVersion = "1.7.10";
+    public String selectedVersion = "1.12.2-forge-14.23.5.2860";
     public boolean isMicrosoft = false;
     public String msaRefreshToken = "0";
     public String xuid;
@@ -85,7 +85,7 @@ public class MinecraftAccount {
                 acc.username = "0";
             }
             if (acc.selectedVersion == null) {
-                acc.selectedVersion = "1.7.10";
+                acc.selectedVersion = "1.12.2-forge-14.23.5.2860";
             }
             if (acc.msaRefreshToken == null) {
                 acc.msaRefreshToken = "0";

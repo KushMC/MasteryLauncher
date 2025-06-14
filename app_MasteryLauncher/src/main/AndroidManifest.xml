@@ -94,7 +94,6 @@
             android:theme="@style/Theme.AppCompat.DayNight.Dialog" />
 
         <activity
-            android:process=":gui_installer"
             android:name="com.redemastery.oldapi.pojav.JavaGUILauncherActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|smallestScreenSize|screenLayout|keyboard|navigation|uiMode"
             android:screenOrientation="sensorLandscape" />

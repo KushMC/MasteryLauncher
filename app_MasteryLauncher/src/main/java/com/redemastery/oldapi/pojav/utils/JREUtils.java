@@ -338,12 +338,11 @@ public class JREUtils {
         JREUtils.setupExitMethod(activity.getApplication());
         chdir(gameDirectory == null ? Tools.DIR_GAME_NEW : gameDirectory.getAbsolutePath());
         userArgs.add(0,"java"); //argv[0] is the program name according to C standard.
-
-        final int exitCode = VMLauncher.launchJVM(userArgs.toArray(new String[0]));
+         final int exitCode = VMLauncher.launchJVM(userArgs.toArray(new String[0]));
         Logger.appendToLog("Java Exit code: " + exitCode);
         if (exitCode != 0) {
             LifecycleAwareAlertDialog.DialogCreator dialogCreator = (dialog, builder)->
-                    builder.setMessage("Ocorreu um erro ao tentar instalar o Forge")
+                    builder.setMessage("Ocorreu um erro")
                     .setPositiveButton("Tentar novamente", (dialogInterface, which)->  Tools.fullyExit());
 
             LifecycleAwareAlertDialog.haltOnDialog(activity.getLifecycle(), activity, dialogCreator);
@@ -374,7 +373,6 @@ public class JREUtils {
                 "-Dpojav.path.minecraft=" + Tools.DIR_GAME_NEW,
                 "-Dpojav.path.private.account=" + Tools.DIR_ACCOUNT_NEW,
                 "-Duser.timezone=" + TimeZone.getDefault().getID(),
-
                 "-Dorg.lwjgl.vulkan.libname=libvulkan.so",
                 //LWJGL 3 DEBUG FLAGS
                 //"-Dorg.lwjgl.util.Debug=true",
