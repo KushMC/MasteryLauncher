@@ -1,7 +1,6 @@
 /.gradle
 /build
 /*/build
-app_MasteryLauncher/src/main/assets/components/jre
 /app_MasteryLauncher/src/main/assets/components/jre-new/
 /app_MasteryLauncher/src/main/assets/components/jre-21/
 local.properties
