@@ -9,7 +9,7 @@ import retrofit2.http.Url
 
 interface RedeMasteryApi {
 
-    @GET("updater/updater.json")
+    @GET("colocateujson/chorao/")
     suspend fun getUpdaterInfo(): Response<UpdateInfoResponse>
 
     @GET

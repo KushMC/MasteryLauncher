@@ -22,7 +22,7 @@ object NetworkModule {
 
     @Provides
     @RedeMastery
-    fun provideRedeMasteryBaseUrl() = "https://drakonara.com/assets/"
+    fun provideRedeMasteryBaseUrl() = "urldoclienteXorao"
 
 
     @Provides
